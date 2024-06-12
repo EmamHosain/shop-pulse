@@ -10,13 +10,13 @@ return new class extends Migration {
      */
     public function up(): void
     {
-        Schema::create('category_sliders', function (Blueprint $table) {
+        Schema::create('brand_sliders', function (Blueprint $table) {
             $table->id();
-            $table->unsignedBigInteger('category_id')->index();
-            $table->string('cat_slider_name', 255);
-            $table->text('cat_slider');
+            $table->unsignedBigInteger('brand_id')->index();
+            $table->string('brand_slider_name', 255)->unique()->index();
+            $table->text('brand_slider');
             $table->string('slug', 255)->index();
-            $table->foreign('category_id')->references('id')->on('categories')->onDelete('cascade')->onUpdate('cascade');
+            $table->foreign('brand_id')->references('id')->on('brands')->onDelete('cascade')->onUpdate('cascade');
             $table->timestamps();
         });
     }
@@ -26,6 +26,6 @@ return new class extends Migration {
      */
     public function down(): void
     {
-        Schema::dropIfExists('category_sliders');
+        Schema::dropIfExists('brand_sliders');
     }
 };
