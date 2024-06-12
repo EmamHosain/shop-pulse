@@ -48,10 +48,15 @@ class Product extends Model
         return $this->belongsToMany(ProductUnit::class, 'product_product_unit');
     }
 
+    public function categories()
+    {
+        return $this->belongsToMany(Category::class, 'category_product');
+    }
 
 
 
-    
+
+
     // Example of an accessor (optional, if you need it)
     public function getDiscountedPriceAttribute()
     {
@@ -59,9 +64,4 @@ class Product extends Model
         return $this->price - ($this->price * ($this->discount_percentage / 100));
     }
 
-    // Example of a mutator (optional, if you need it)
-    public function setSlugAttribute($value)
-    {
-        $this->attributes['slug'] = \Str::slug($value);
-    }
 }

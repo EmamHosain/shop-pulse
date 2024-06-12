@@ -23,10 +23,9 @@ return new class extends Migration {
             $table->boolean('inStock')->default(0);
             $table->integer('stock_count');
 
-            $table->decimal('price', 10, 2);
+            $table->float('price',2);
             $table->integer('discount_percentage')->default(0);
-            $table->decimal('discount_price', 2)->default(0);
-
+            $table->float('discount_price',2)->default(0);
 
             $table->foreign('brand_id')->references('id')->on('brands')->onDelete('restrict')->onUpdate('cascade');
             $table->timestamps();

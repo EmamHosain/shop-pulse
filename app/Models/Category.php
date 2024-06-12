@@ -35,16 +35,8 @@ class Category extends Model
         return $this->belongsToMany(Product::class, 'category_product'); // Assuming a many-to-many relationship
     }
 
-    // Example of an accessor (optional, if you need it)
-    public function getLogoUrlAttribute()
-    {
-        // Assuming `cat_logo` stores a file path, and you want to create a URL
-        return url('storage/' . $this->cat_logo);
-    }
+    
+    
 
-    // Example of a mutator (optional, if you need it)
-    public function setSlugAttribute($value)
-    {
-        $this->attributes['slug'] = \Str::slug($value);
-    }
+   
 }
