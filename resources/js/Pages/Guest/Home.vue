@@ -7,7 +7,7 @@ import Features from "@/Components/MyComponent/Features.vue";
 import RecomendedProducts from '../../Components/MyComponent/RecomendedProducts.vue'
 import NewArrivalProducts from "@/Components/MyComponent/NewArrivalProducts.vue";
 import GuestLayout from "@/Layouts/GuestLayout.vue";
-
+import BrandList from "@/Components/MyComponent/BrandList.vue";
 
 
 </script>
@@ -28,7 +28,9 @@ import GuestLayout from "@/Layouts/GuestLayout.vue";
                     </a>
                 </div>
                 <RecomendedProducts />
-
+                <br>
+                <BrandList />
+                <br>
             </main>
 
         </div>
