@@ -1,11 +1,15 @@
 <script setup>
+import { Link, router, usePage } from '@inertiajs/vue3';
 import SingleProduct from './SingleProduct.vue';
 import PlusIcon from '../Icons/PlusIcon.vue';
 import MinusIcon from '../Icons/MinusIcon.vue';
 import DownArrowIcon from '../Icons/DownArrowIcon.vue';
 import FunnelIcon from '../../Components/Icons/FunnelIcon.vue'
 import Squares2X2Icon from '../../Components/Icons/Squares2X2Icon.vue'
-import { ref } from 'vue'
+import XMarkIcon from '../Icons/XMarkIcon.vue';
+import { computed, watch, ref } from 'vue';
+
+
 import {
     Dialog,
     DialogPanel,
@@ -21,6 +25,9 @@ import {
 } from '@headlessui/vue'
 
 
+
+
+
 const sortOptions = [
     { name: 'Most Popular', href: '#', current: true },
     { name: 'Best Rating', href: '#', current: false },
@@ -28,6 +35,11 @@ const sortOptions = [
     { name: 'Price: Low to High', href: '#', current: false },
     { name: 'Price: High to Low', href: '#', current: false },
 ]
+
+
+
+
+
 const subCategories = [
     { name: 'Totes', href: '#' },
     { name: 'Backpacks', href: '#' },
@@ -35,6 +47,12 @@ const subCategories = [
     { name: 'Hip Bags', href: '#' },
     { name: 'Laptop Sleeves', href: '#' },
 ]
+
+
+
+
+
+
 const filters = [
     {
         id: 'color',
@@ -74,6 +92,42 @@ const filters = [
 ]
 
 const mobileFiltersOpen = ref(false)
+
+
+
+
+const products = computed(() => usePage().props.products);
+const categories = usePage().props.categories.data;
+const brands = usePage().props.brands.data;
+
+
+// const selectedCategory = ref('')
+const selectedBrand = ref('');
+const getProductsByCategory = (slug) => {
+    selectedBrand.value = '';
+    router.get(route('page.productsByCategory', slug), '', {
+        preserveState: true,
+        preserveScroll: true,
+        replace: true,
+        onError: (errors) => {
+            console.log('sort category errors', errors)
+        }
+    });
+}
+
+
+watch(selectedBrand, (newValue) => {
+    router.get(route('page.productsByBrand', newValue), '', {
+        preserveState: true,
+        preserveScroll: true,
+        replace: true,
+        onError: (errors) => {
+            console.log('sort brand error', errors)
+        }
+    });
+
+})
+
 </script>
 <template>
     <div class="bg-white">
@@ -100,18 +154,23 @@ const mobileFiltersOpen = ref(false)
                                         class="-mr-2 flex h-10 w-10 items-center justify-center rounded-md bg-white p-2 text-gray-400"
                                         @click="mobileFiltersOpen = false">
                                         <span class="sr-only">Close menu</span>
-                                        <XMarkIcon class="h-6 w-6" aria-hidden="true" />
+
+                                        <XMarkIcon class="size-6" aria-hidden="true" />
+
+
+
                                     </button>
                                 </div>
 
                                 <!-- Filters -->
                                 <form class="mt-4 border-t border-gray-200">
-                                    <h3 class="sr-only">Categories</h3>
-                                    <ul role="list" class="px-2 py-3 font-medium text-gray-900">
-                                        <li v-for="category in subCategories" :key="category.name">
-                                            <a :href="category.href" class="block px-2 py-3">{{ category.name }}</a>
+                                    <h3 class="">Categories</h3>
+                                    <!-- <ul role="list" class="px-2 py-3 font-medium text-gray-900">
+                                        <li v-for="category in categories" :key="category.id">
+                                            <Link :href="route('page.productsByCategory', category.slug)"
+                                                class="block px-2 py-3">{{ category.cat_name }}</Link>
                                         </li>
-                                    </ul>
+                                    </ul> -->
 
                                     <Disclosure as="div" v-for="section in filters" :key="section.id"
                                         class="border-t border-gray-200 px-4 py-6" v-slot="{ open }">
@@ -134,6 +193,10 @@ const mobileFiltersOpen = ref(false)
                                                 </span>
                                             </DisclosureButton>
                                         </h3>
+
+
+
+
                                         <DisclosurePanel class="pt-6">
                                             <div class="space-y-6">
                                                 <div v-for="(option, optionIdx) in section.options" :key="option.value"
@@ -147,6 +210,10 @@ const mobileFiltersOpen = ref(false)
                                                 </div>
                                             </div>
                                         </DisclosurePanel>
+
+
+
+
                                     </Disclosure>
                                 </form>
                             </DialogPanel>
@@ -154,6 +221,7 @@ const mobileFiltersOpen = ref(false)
                     </div>
                 </Dialog>
             </TransitionRoot>
+
             <main class="container px-4 md:px-0">
                 <div class="flex items-baseline justify-between border-b border-gray-200 pb-6 pt-24">
                     <h1 class="text-4xl font-bold tracking-tight text-gray-900">New Arrivals</h1>
@@ -220,38 +288,94 @@ const mobileFiltersOpen = ref(false)
                         <!-- Filters -->
                         <form class="hidden lg:block">
                             <h3 class="sr-only">Categories</h3>
-                            <ul role="list"
+                            <!-- <ul role="list"
                                 class="space-y-4 border-b border-gray-200 pb-6 text-sm font-medium text-gray-900">
-                                <li v-for="category in subCategories" :key="category.name">
-                                    <a :href="category.href">{{ category.name }}</a>
+                                <li v-for="category in categories" :key="category.id">
+                                    <a href="#">{{ category.cat_name }}</a>
                                 </li>
-                            </ul>
+                            </ul> -->
 
-                            <Disclosure as="div" v-for="section in filters" :key="section.id"
-                                class="border-b border-gray-200 py-6" v-slot="{ open }">
-                                <h3 class="-my-3 flow-root">
+
+
+
+                            <!-- category start here -->
+                            <Disclosure as="div" class="border-b border-gray-200 py-6" v-slot="{ open }">
+                                <h3 class="-my-3 flow-root border-b-2 mb-0.5">
                                     <DisclosureButton
-                                        class="flex w-full items-center justify-between bg-white py-3 text-sm text-gray-400 hover:text-gray-500">
-                                        <span class="font-medium text-gray-900">{{ section.name }}</span>
+                                        class="flex w-full items-center justify-between bg-white text-sm text-gray-400 hover:text-gray-500">
+
+                                        <p class="font-medium text-black border-b-2 border-black pb-2 text-md capitalize">
+                                            Category</p>
+
+
                                         <span class="ml-6 flex items-center">
-                                            <PlusIcon v-if="!open" class="h-5 w-5" aria-hidden="true" />
-                                            <MinusIcon v-else class="h-5 w-5" aria-hidden="true" />
+                                            <PlusIcon v-if="!open" class="h-5 w-5 text-black" aria-hidden="true" />
+                                            <MinusIcon v-else class="h-5 w-5 text-black" aria-hidden="true" />
                                         </span>
+
                                     </DisclosureButton>
                                 </h3>
-                                <DisclosurePanel class="pt-6">
+                                <DisclosurePanel class="pt-6 category-container">
                                     <div class="space-y-4">
-                                        <div v-for="(option, optionIdx) in section.options" :key="option.value"
-                                            class="flex items-center">
-                                            <input :id="`filter-${section.id}-${optionIdx}`" :name="`${section.id}[]`"
-                                                :value="option.value" type="checkbox" :checked="option.checked"
-                                                class="h-4 w-4 rounded border-gray-300 text-indigo-600 focus:ring-indigo-500" />
-                                            <label :for="`filter-${section.id}-${optionIdx}`"
-                                                class="ml-3 text-sm text-gray-600">{{ option.label }}</label>
+                                        <div class="flex flex-col gap-3">
+                                            <p @click="getProductsByCategory(category.slug)" v-for="category in categories"
+                                                :key="category.id"
+                                                class=" cursor-pointer text-left hover:to-blue-500 category-name">
+                                                {{ category.cat_name }}
+                                            </p>
                                         </div>
                                     </div>
                                 </DisclosurePanel>
                             </Disclosure>
+                            <!-- category end here -->
+
+
+
+
+
+
+
+
+
+                            <!-- brands start here -->
+                            <Disclosure as="div" class="border-b border-gray-200 py-6" v-slot="{ open }">
+                                <h3 class="-my-3 flow-root border-b-2 mb-0.5">
+                                    <DisclosureButton
+                                        class="flex w-full items-center justify-between bg-white text-sm text-gray-400 hover:text-gray-500">
+
+                                        <p class="font-medium text-black border-b-2 border-black pb-2 text-md">Brand</p>
+
+
+                                        <span class="ml-6 flex items-center">
+                                            <PlusIcon v-if="!open" class="h-5 w-5 text-black" aria-hidden="true" />
+                                            <MinusIcon v-else class="h-5 w-5 text-black" aria-hidden="true" />
+                                        </span>
+
+                                    </DisclosureButton>
+                                </h3>
+
+                                <DisclosurePanel class="pt-6">
+                                    <div class="space-y-4">
+                                        <div v-for="brand in brands" :key="brand.id" class="flex items-center">
+                                            <input :id="`filter-${brand.id}`" v-model="selectedBrand" :value="brand.slug"
+                                                type="radio" name="brand"
+                                                class="h-4 w-4 rounded border-gray-300 text-indigo-600 focus:ring-indigo-500" />
+                                            <label :for="`filter-${brand.id}`" class="ml-3 text-sm text-gray-600">{{
+                                                brand.brand_name }}</label>
+                                        </div>
+                                    </div>
+                                </DisclosurePanel>
+                            </Disclosure>
+                            <!-- brands end here -->
+
+
+
+
+
+
+
+
+
                         </form>
 
                         <!-- Product grid -->
@@ -259,10 +383,10 @@ const mobileFiltersOpen = ref(false)
                             <!-- Your content -->
                             <section class="bg-white  text-gray-700   ">
                                 <div class=" px-4 md:px-0  container">
-                                    
+
                                     <div class=" grid grid-cols-2 gap-2 sm:grid-cols-4 sm:gap-4">
                                         <!-- product here -->
-                                        <SingleProduct v-for="item in 8" :key="item" />
+                                        <SingleProduct :product-items="products" />
 
                                     </div>
                                 </div>
@@ -275,3 +399,62 @@ const mobileFiltersOpen = ref(false)
     </div>
 </template>
   
+<style scoped>
+.category-name:hover {
+    color: rgba(0, 0, 255, 0.746);
+}
+
+.border-b {
+    border: none;
+}
+
+.category-container {
+    /* width: 100px; */
+    /* Adjust as needed */
+    max-height: 400px;
+    /* Adjust as needed */
+    overflow-y: scroll;
+    /* Enable vertical scrolling */
+    /* border: 1px solid #ccc; */
+    /* Optional border for container */
+    padding: 2px 0px;
+}
+
+/* Basic styles for the container */
+
+/* Custom scrollbar styles for WebKit browsers */
+.category-container::-webkit-scrollbar {
+    width: 12px;
+    /* Width of the scrollbar */
+}
+
+/* Track styles */
+.category-container::-webkit-scrollbar-track {
+    background: linear-gradient(to bottom, #f5f5f5, #e0e0e0);
+    /* Light gradient for the track */
+    border-radius: 10px;
+    /* Rounded corners for the track */
+}
+
+/* Thumb styles */
+.category-container::-webkit-scrollbar-thumb {
+    background: linear-gradient(to bottom, #a3c6f7, #cfe8ff);
+    /* Gradient for the thumb */
+    border-radius: 10px;
+    /* Rounded corners for the thumb */
+    border: 2px solid #ffffff;
+    /* White border to create spacing effect */
+}
+
+/* Thumb hover effect */
+.category-container::-webkit-scrollbar-thumb:hover {
+    background: linear-gradient(to bottom, #82a9e3, #b0d4f9);
+    /* Darker gradient on hover */
+}
+
+/* Custom scrollbar for Firefox */
+/* .scroll-container {
+    scrollbar-width: thin;
+    scrollbar-color: #a3c6f7 #e0e0e0;
+} */
+</style>

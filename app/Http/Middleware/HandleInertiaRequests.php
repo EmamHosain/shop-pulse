@@ -2,9 +2,21 @@
 
 namespace App\Http\Middleware;
 
-use Illuminate\Http\Request;
+
+use App\Models\Brand;
 use Inertia\Middleware;
+use App\Models\Category;
 use Tighten\Ziggy\Ziggy;
+use App\Helper\CartHelper;
+use App\Helper\WishListHelper;
+
+use Illuminate\Http\Request;
+use App\Http\Resources\CartResource;
+use App\Http\Resources\BrandResource;
+use App\Http\Resources\CategoryResource;
+use App\Http\Resources\WishlistResource;
+
+
 
 class HandleInertiaRequests extends Middleware
 {
@@ -30,12 +42,30 @@ class HandleInertiaRequests extends Middleware
      */
     public function share(Request $request): array
     {
+        $categories = Category::get();
+        $brands = Brand::get();
+
         return [
             ...parent::share($request),
-            'ziggy' => fn () => [
-                ...(new Ziggy)->toArray(),
-                'location' => $request->url(),
+            // 'ziggy' => fn() => [
+            //     ...(new Ziggy)->toArray(),
+            //     'location' => $request->url(),
+            // ],
+
+            'flash' => [
+                'success' => fn() => $request->session()->get('success'),
+                'error' => fn() => $request->session()->get('error'),
+                'warning' => fn() => $request->session()->get('warning'),
+                'info' => fn() => $request->session()->get('info')
             ],
+
+            'categories' => CategoryResource::collection($categories),
+            'brands' => BrandResource::collection($brands),
+            'cart' => new CartResource(CartHelper::getProductsAndCartItems()),
+
+            'wishlist' => new WishlistResource(WishListHelper::getProductsAndCartItems()),
+
+
         ];
     }
 }

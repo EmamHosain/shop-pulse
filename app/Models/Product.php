@@ -27,7 +27,8 @@ class Product extends Model
         'stock_count',
         'price',
         'discount_percentage',
-        'discount_price'
+        'discount_price',
+        'discount_amount',
     ];
 
     // Add any necessary casts or date properties
@@ -53,7 +54,10 @@ class Product extends Model
         return $this->belongsToMany(Category::class, 'category_product');
     }
 
-
+    public function productImages()
+    {
+        return $this->hasMany(ProductImage::class);
+    }
 
 
 

@@ -16,7 +16,9 @@ class CartItem extends Model
 
     // Define which attributes can be mass assigned
     protected $fillable = [
-        'product_id'
+        'product_id',
+        'customer_id',
+        'quantity',
     ];
 
     // Add any necessary casts or date properties
@@ -29,5 +31,8 @@ class CartItem extends Model
     public function product()
     {
         return $this->belongsTo(Product::class, 'product_id');
+    }
+    public function customer(){
+        return $this->belongsTo(Customer::class,'customer_id');
     }
 }

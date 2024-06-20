@@ -31,7 +31,7 @@ class ProductSeeder extends Seeder
 
 
             $price = $faker->randomFloat(2, 100, 500); // Price between 100 and 500
-            $discount_percentage = $faker->numberBetween(0, 50); // Discount between 0% and 50%
+            $discount_percentage = $faker->numberBetween(1, 50); // Discount between 0% and 50%
             $discount_amount = $price * $discount_percentage / 100;
             $discount_price = round($price - $discount_amount);
 
@@ -44,10 +44,11 @@ class ProductSeeder extends Seeder
                 'long_description' => $faker->paragraphs(3, true),
                 'published' => $faker->boolean,
                 'inStock' => $faker->boolean,
-                'stock_count' => $faker->numberBetween(0, 100),
+                'stock_count' => $faker->numberBetween(1, 100),
                 'price' => $price,
                 'discount_percentage' => $discount_percentage,
                 'discount_price' => $discount_price,
+                'discount_amount'=> $discount_amount
             ]);
 
             $category = Category::pluck('id')->all();

@@ -3,47 +3,27 @@
 namespace App\Http\Controllers;
 
 use Inertia\Inertia;
+use App\Models\Brand;
+use App\Models\Product;
+use App\Models\Category;
 use Illuminate\Http\Request;
-use Illuminate\Foundation\Application;
+use App\Http\Resources\BrandResource;
 use Illuminate\Support\Facades\Route;
+use Illuminate\Foundation\Application;
+use App\Http\Resources\CategoryResource;
 
 
 class HomeController extends Controller
 {
     public function index()
     {
+
+        $products = Product::where('published', true)->get();
         return Inertia::render('Guest/Home', [
-            'canLogin' => Route::has('login'),
-            'canRegister' => Route::has('register'),
-            'laravelVersion' => Application::VERSION,
-            'phpVersion' => PHP_VERSION,
+            'products' => $products
         ]);
     }
 
 
-    public function getProductsByCategory(Request $request)
-    {
-        return Inertia::render('Guest/ProductsByCategory');
-    }
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-    public function homeOne()
-    {
-        return Inertia::render('Homepage/Home-1');
-    }
 }

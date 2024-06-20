@@ -1,10 +1,19 @@
 <script setup>
+import { computed } from 'vue';
 import Teliphone from '../Icons/Teliphone.vue';
 import MainLogo from './MainLogo.vue';
 import SearchIcon from '../Icons/SearchIcon.vue';
 import WishListIcon from '../Icons/WishListIcon.vue';
 import CartIcon from '../Icons/CartIcon.vue';
-import { router } from '@inertiajs/vue3';
+import { router, usePage } from '@inertiajs/vue3';
+
+const cartCount = computed(() => usePage().props.cart.data.count);
+const wishlistCount = computed(() => usePage().props.wishlist.data.count);
+console.log('count', wishlistCount.value)
+
+
+
+
 
 
 const goToWishlist = () => {
@@ -21,6 +30,13 @@ const goToCheckout = () => {
         }
     })
 }
+
+
+
+
+
+
+
 </script>
 <template>
     <header class="">
@@ -68,7 +84,7 @@ const goToCheckout = () => {
                         <div class="absolute -top-1 left-6">
                             <p style="background-color: #439ddf"
                                 class="flex h-2 w-2 items-center justify-center rounded-full p-2.5 text-xs text-white">
-                                0
+                                {{ wishlistCount }}
                             </p>
                         </div>
                         <WishListIcon class="text-white" :weight="2" :size="30" />
@@ -80,7 +96,7 @@ const goToCheckout = () => {
                         <div class="absolute -top-1 left-4">
                             <p style="background-color: #439ddf"
                                 class="flex h-2 w-2 items-center justify-center rounded-full p-2.5 text-xs text-white">
-                                0
+                                {{ cartCount }}
                             </p>
                         </div>
                         <CartIcon class="text-white" :weight="2" :size="30" />

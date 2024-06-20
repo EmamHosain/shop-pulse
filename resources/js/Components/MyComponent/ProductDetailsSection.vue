@@ -1,5 +1,5 @@
 <script setup>
-import { ref } from 'vue';
+import { ref, computed } from 'vue';
 import TabView from 'primevue/tabview';
 import TabPanel from 'primevue/tabpanel';
 
@@ -13,25 +13,73 @@ import CartIcon from '../Icons/CartIcon.vue';
 import Teliphone from '../Icons/Teliphone.vue';
 
 import SingleProduct from './SingleProduct.vue';
+import { router, usePage } from '@inertiajs/vue3';
+
+import Category from './Category.vue';
+import BreadcrumbSection from './BreadcrumbSection.vue';
 
 
 
-
-
+const product = computed(() => usePage().props.product);
+const relatedProducts = computed(() => usePage().props.related_products);
+// console.log('products',relatedProducts);
 
 const active = ref(0);
+
+
+
+const productsByCategory = (slug) => {
+    router.get(route('page.productsByCategory', slug), '', {
+        preserveState: true,
+        preserveScroll: true,
+        onError: (errors) => {
+            console.log('category error', errors)
+        }
+    })
+}
+
+
+// product quantity function start here
+const quantity = ref(1);
+const incrementQuantity = () => {
+    quantity.value = quantity.value + 1
+}
+
+const decrementQuantity = () => {
+    if (quantity.value >= 2) {
+        quantity.value = quantity.value - 1
+
+    } else {
+        return;
+    }
+}
+
+
+
+
+
 
 </script>
 <template>
     <div class="font-sans">
         <div class="p-4 container">
+
+
+            <!-- category header start here -->
+            <Category />
+            <!-- category header end here -->
+            <BreadcrumbSection :link="'product details'" />
+
+
+
+
             <!-- cart start here -->
             <div class="grid items-start grid-cols-1 lg:grid-cols-5 gap-12">
 
 
                 <!-- images start here -->
                 <div
-                    class="min-h-[500px] lg:col-span-3 bg-gradient-to-tr  from-[#F8C794] via-[#FFE0B5] to-[#FFF2D7] rounded-lg w-full lg:sticky top-0 text-center p-6">
+                    class="min-h-[500px] lg:col-span-3 bg-gradient-to-tr  from-[#F8C794] via-[#FFE0B5] to-[#FFF2D7] rounded-lg w-full  top-0 text-center p-6">
                     <img src="../../../assets/images-1/blog_img4.jpg" alt="Product"
                         class="w-3/5 rounded object-cover mx-auto py-6" />
 
@@ -63,18 +111,23 @@ const active = ref(0);
 
                 <div class="lg:col-span-2">
                     <!-- heading -->
-                    <h2 class="text-2xl font-bold text-gray-800">Espresso Elegante | Coffee</h2>
+                    <h2 class="text-2xl font-bold text-gray-800 my-1">{{ product.title }}</h2>
                     <!-- stock -->
-                    <div>
-                        <span>stock</span>
-                        <span class="bg-red-500 text-white px-4 py-1.5">1123</span>
+                    <div class="mb-1">
+                        <span class=" inline-block mr-2 capitalize">stock</span>
+                        <span class="bg-blue-400 text-white px-2 rounded-xl">{{ product.quantity }}</span>
                     </div>
                     <div>
-                        <span>category : </span> <span class="font-bold">Health Care</span>
+                        <!-- <span>category : </span> <span class="font-bold">{{ product.category }}</span> -->
                     </div>
                     <div>
-                        <span class=" text-2xl font-bold">Tk 1,990</span> <del class="text-gray-400 text-sm">Tk 2,560</del>
-                        <span class="text-blue-400 font-semibold">30 TK OFF</span>
+                        <span class=" text-2xl font-bold mr-2">Tk {{ product.discount_price ? product.discount_price
+                            : product.price }}</span>
+
+
+                        <del v-if="product.discount_price" class="text-gray-400 text-sm mr-2">Tk {{ product.price }}</del>
+                        <span v-if="product.discount_price" class="text-blue-400 font-semibold">{{ product.discount_amount
+                        }} TK OFF</span>
                     </div>
 
 
@@ -84,33 +137,38 @@ const active = ref(0);
                     <hr />
                     <!-- short description -->
                     <div class="mt-8">
-                        <h3 class="text-xl font-bold text-gray-800">ডায়াবেটিস রোগী এবং যারা হাটার সুযোগ পায় না তাদের জন্য
-                            অত্যন্ত কার্যকরী একটি যন্ত্র।</h3>
-
-
+                        <h3 class="text-xl font-bold text-gray-800">{{ product.short_description }}</h3>
                     </div>
 
-                    <!-- product quantity -->
+                    <!-- product quantity start here -->
                     <div class="mt-8">
                         <h3 class="text-lg font-bold text-gray-800">Quantity</h3>
                         <div class="flex divide-x border w-max mt-4 rounded overflow-hidden">
-                            <button type="button"
+                            <!-- decrement button -->
+                            <button @click="decrementQuantity()" type="button"
                                 class="bg-gray-100 w-10 h-9 font-semibold flex items-center justify-center">
-
-                               
                                 <MinusIcon class="w-5 h-5" />
                             </button>
+
+                            <!-- quantity button  -->
                             <button type="button"
                                 class="bg-transparent w-10 h-9 font-semibold flex items-center justify-center text-gray-800 text-lg">
-                                1
+                                {{ quantity }}
                             </button>
-                            <button type="button"
+
+
+
+                            <!-- increment button -->
+                            <button @click="incrementQuantity()" type="button"
                                 class="bg-gray-800 text-white w-10 h-9 font-semibold flex items-center justify-center">
                                 <PlusIcon class="w-5 h-5" />
                             </button>
                         </div>
                     </div>
+                    <!-- product quantity end here -->
 
+
+                    <!-- action button start here -->
                     <div class="flex gap-4 mb-4">
                         <button type="button"
                             class=" mt-8 px-6 py-3 bg-orange-400 hover:bg-orange-500 text-white text-sm font-semibold rounded-md">Buy
@@ -128,9 +186,42 @@ const active = ref(0);
                             <span> Add to cart</span>
                         </button>
                     </div>
+                    <!-- action button end here -->
 
 
-                    <hr>
+
+
+
+
+                    <!-- brand start here -->
+                    <p><span class=" capitalize">brand</span> : <span
+                            class=" font-semibold text-sm cursor-pointer hover:text-blue-400 capitalize">{{
+                                product.brand.brand_name }}</span>
+                    </p>
+                    <!-- brand end here -->
+
+
+                    <!-- category start here -->
+                    <p v-if="product.categories.length >= 2">
+                        <span class=" capitalize  text-sm">related categories</span> :
+                        <span @click="productsByCategory(category.slug)" v-for="category in product.categories"
+                            :key="category.id" class="bg-blue-400 text-white px-3 py-1 rounded-md  cursor-pointer">{{
+                                category.cat_name }}</span>
+                    </p>
+                    <p v-if="product.categories.length == 1">
+                        <span class=" capitalize  text-sm">category</span> :
+                        <span @click="productsByCategory(product.categories[0].slug)"
+                            class=" font-semibold capitalize cursor-pointer hover:text-blue-400">{{
+                                product.categories[0].cat_name }}</span>
+                    </p>
+                    <p v-else>
+                        <span class=" capitalize  text-sm">category</span> :
+                        <span>empty</span>
+                    </p>
+                    <!-- category end here -->
+
+
+                    <hr class="mt-4">
                     <div class="py-4">
                         <p class="flex items-center gap-2">
                             <span>
@@ -143,123 +234,6 @@ const active = ref(0);
                         </p>
                     </div>
                     <hr>
-
-
-                    <!-- <div class="mt-8">
-                        <h3 class="text-xl font-bold text-gray-800">Reviews(10)</h3>
-                        <div class="space-y-3 mt-4">
-                            <div class="flex items-center">
-                                <p class="text-sm text-gray-800 font-bold">5.0</p>
-                                <svg class="w-5 fill-orange-400 ml-1" viewBox="0 0 14 13" fill="none"
-                                    xmlns="http://www.w3.org/2000/svg">
-                                    <path
-                                        d="M7 0L9.4687 3.60213L13.6574 4.83688L10.9944 8.29787L11.1145 12.6631L7 11.2L2.8855 12.6631L3.00556 8.29787L0.342604 4.83688L4.5313 3.60213L7 0Z" />
-                                </svg>
-                                <div class="bg-gray-300 rounded w-full h-2 ml-3">
-                                    <div class="w-2/3 h-full rounded bg-orange-400"></div>
-                                </div>
-                                <p class="text-sm text-gray-800 font-bold ml-3">66%</p>
-                            </div>
-
-                            <div class="flex items-center">
-                                <p class="text-sm text-gray-800 font-bold">4.0</p>
-                                <svg class="w-5 fill-orange-400 ml-1" viewBox="0 0 14 13" fill="none"
-                                    xmlns="http://www.w3.org/2000/svg">
-                                    <path
-                                        d="M7 0L9.4687 3.60213L13.6574 4.83688L10.9944 8.29787L11.1145 12.6631L7 11.2L2.8855 12.6631L3.00556 8.29787L0.342604 4.83688L4.5313 3.60213L7 0Z" />
-                                </svg>
-                                <div class="bg-gray-300 rounded w-full h-2 ml-3">
-                                    <div class="w-1/3 h-full rounded bg-orange-400"></div>
-                                </div>
-                                <p class="text-sm text-gray-800 font-bold ml-3">33%</p>
-                            </div>
-
-                            <div class="flex items-center">
-                                <p class="text-sm text-gray-800 font-bold">3.0</p>
-                                <svg class="w-5 fill-orange-400 ml-1" viewBox="0 0 14 13" fill="none"
-                                    xmlns="http://www.w3.org/2000/svg">
-                                    <path
-                                        d="M7 0L9.4687 3.60213L13.6574 4.83688L10.9944 8.29787L11.1145 12.6631L7 11.2L2.8855 12.6631L3.00556 8.29787L0.342604 4.83688L4.5313 3.60213L7 0Z" />
-                                </svg>
-                                <div class="bg-gray-300 rounded w-full h-2 ml-3">
-                                    <div class="w-1/6 h-full rounded bg-orange-400"></div>
-                                </div>
-                                <p class="text-sm text-gray-800 font-bold ml-3">16%</p>
-                            </div>
-
-                            <div class="flex items-center">
-                                <p class="text-sm text-gray-800 font-bold">2.0</p>
-                                <svg class="w-5 fill-orange-400 ml-1" viewBox="0 0 14 13" fill="none"
-                                    xmlns="http://www.w3.org/2000/svg">
-                                    <path
-                                        d="M7 0L9.4687 3.60213L13.6574 4.83688L10.9944 8.29787L11.1145 12.6631L7 11.2L2.8855 12.6631L3.00556 8.29787L0.342604 4.83688L4.5313 3.60213L7 0Z" />
-                                </svg>
-                                <div class="bg-gray-300 rounded w-full h-2 ml-3">
-                                    <div class="w-1/12 h-full rounded bg-orange-400"></div>
-                                </div>
-                                <p class="text-sm text-gray-800 font-bold ml-3">8%</p>
-                            </div>
-
-                            <div class="flex items-center">
-                                <p class="text-sm text-gray-800 font-bold">1.0</p>
-                                <svg class="w-5 fill-orange-400 ml-1" viewBox="0 0 14 13" fill="none"
-                                    xmlns="http://www.w3.org/2000/svg">
-                                    <path
-                                        d="M7 0L9.4687 3.60213L13.6574 4.83688L10.9944 8.29787L11.1145 12.6631L7 11.2L2.8855 12.6631L3.00556 8.29787L0.342604 4.83688L4.5313 3.60213L7 0Z" />
-                                </svg>
-                                <div class="bg-gray-300 rounded w-full h-2 ml-3">
-                                    <div class="w-[6%] h-full rounded bg-orange-400"></div>
-                                </div>
-                                <p class="text-sm text-gray-800 font-bold ml-3">6%</p>
-                            </div>
-                        </div>
-
-                        <div class="flex items-start mt-8">
-                            <img src="https://readymadeui.com/team-2.webp"
-                                class="w-12 h-12 rounded-full border-2 border-white" />
-                            <div class="ml-3">
-                                <h4 class="text-sm font-bold">John Doe</h4>
-                                <div class="flex space-x-1 mt-1">
-                                    <svg class="w-4 fill-orange-400" viewBox="0 0 14 13" fill="none"
-                                        xmlns="http://www.w3.org/2000/svg">
-                                        <path
-                                            d="M7 0L9.4687 3.60213L13.6574 4.83688L10.9944 8.29787L11.1145 12.6631L7 11.2L2.8855 12.6631L3.00556 8.29787L0.342604 4.83688L4.5313 3.60213L7 0Z" />
-                                    </svg>
-                                    <svg class="w-4 fill-orange-400" viewBox="0 0 14 13" fill="none"
-                                        xmlns="http://www.w3.org/2000/svg">
-                                        <path
-                                            d="M7 0L9.4687 3.60213L13.6574 4.83688L10.9944 8.29787L11.1145 12.6631L7 11.2L2.8855 12.6631L3.00556 8.29787L0.342604 4.83688L4.5313 3.60213L7 0Z" />
-                                    </svg>
-                                    <svg class="w-4 fill-orange-400" viewBox="0 0 14 13" fill="none"
-                                        xmlns="http://www.w3.org/2000/svg">
-                                        <path
-                                            d="M7 0L9.4687 3.60213L13.6574 4.83688L10.9944 8.29787L11.1145 12.6631L7 11.2L2.8855 12.6631L3.00556 8.29787L0.342604 4.83688L4.5313 3.60213L7 0Z" />
-                                    </svg>
-                                    <svg class="w-4 fill-[#CED5D8]" viewBox="0 0 14 13" fill="none"
-                                        xmlns="http://www.w3.org/2000/svg">
-                                        <path
-                                            d="M7 0L9.4687 3.60213L13.6574 4.83688L10.9944 8.29787L11.1145 12.6631L7 11.2L2.8855 12.6631L3.00556 8.29787L0.342604 4.83688L4.5313 3.60213L7 0Z" />
-                                    </svg>
-                                    <svg class="w-4 fill-[#CED5D8]" viewBox="0 0 14 13" fill="none"
-                                        xmlns="http://www.w3.org/2000/svg">
-                                        <path
-                                            d="M7 0L9.4687 3.60213L13.6574 4.83688L10.9944 8.29787L11.1145 12.6631L7 11.2L2.8855 12.6631L3.00556 8.29787L0.342604 4.83688L4.5313 3.60213L7 0Z" />
-                                    </svg>
-                                    <p class="text-xs !ml-2 font-semibold">2 mins ago</p>
-                                </div>
-                                <p class="text-xs mt-4">The service was amazing. I never had to wait that long for my food.
-                                    The staff was friendly and attentive, and the delivery was impressively prompt.</p>
-                            </div>
-                        </div>
-                        <button type="button"
-                            class="w-full mt-8 px-4 py-2.5 bg-transparent border border-orange-400 text-gray-800 font-semibold rounded-lg">Read
-                            all reviews</button>
-                    </div> -->
-
-
-
-
-
 
 
 
@@ -282,12 +256,7 @@ const active = ref(0);
 
                     <TabPanel header="Description">
                         <p class="m-0">
-                            Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut
-                            labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco
-                            laboris nisi ut aliquip ex ea commodo
-                            consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu
-                            fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui
-                            officia deserunt mollit anim id est laborum.
+                            {{ product.long_description }}
                         </p>
                     </TabPanel>
                     <TabPanel header="How to order">
@@ -327,7 +296,7 @@ const active = ref(0);
 
                     <div class="py-4 grid grid-cols-2 gap-6 sm:grid-cols-4 sm:gap-4">
                         <!-- product here -->
-                        <SingleProduct v-for="item in 8" :key="item" />
+                        <SingleProduct :productItems="relatedProducts" />
 
                     </div>
                 </div>

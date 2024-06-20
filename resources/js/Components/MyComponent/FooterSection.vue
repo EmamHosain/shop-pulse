@@ -5,10 +5,10 @@
 <template>
     <footer>
         <!-- newsletter start here -->
-        <div class="bg-[#2e0249] py-16 px-6 font-[sans-serif] container">
+        <div class="custom-gradient py-16 px-6 font-[sans-serif] ">
             <div class="max-w-5xl mx-auto text-center text-white">
                 <h2 class="text-4xl font-extrabold mb-4">Subscribe to Our Newsletter</h2>
-                <p class="text-base text-gray-400">Stay updated with the latest news, trends, and special offers. Don't miss
+                <p class="text-base text-white">Stay updated with the latest news, trends, and special offers. Don't miss
                     out
                     on our exciting updates.</p>
                 <div class="mt-10">
@@ -27,7 +27,7 @@
 
 
         <!-- footer start here -->
-        <footer class="relative mt-20 bg-gray-900 px-4 pt-20">
+        <footer class="relative bg-gray-900 px-4 pt-20">
             <div
                 class="absolute -top-10 left-1/2 h-16 w-16 -translate-x-1/2 rounded-xl border-4 border-sky-500 bg-white p-2">
                 <img class="h-full object-contain" src="../../../assets/images-1/images/favicon.ico" alt="" />
@@ -45,3 +45,9 @@
 
     </footer>
 </template>
+
+<style scoped>
+.custom-gradient {
+    background: linear-gradient(90deg, #4d99d6, #1d61ad);
+}
+</style>

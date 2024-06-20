@@ -17,6 +17,7 @@ class Brand extends Model
     // Define which attributes can be mass assigned
     protected $fillable = [
         'brand_name',
+        'brand_logo',
         'slug'
     ];
 

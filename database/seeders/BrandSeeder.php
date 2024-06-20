@@ -20,6 +20,7 @@ class BrandSeeder extends Seeder
             $brandName = $faker->company;
             Brand::create([
                 'brand_name' => $brandName,
+                'brand_logo'=>$faker->imageUrl,
                 'slug' => Str::slug($brandName)
             ]);
         }

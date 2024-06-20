@@ -1,5 +1,11 @@
 <script setup>
+import { usePage } from '@inertiajs/vue3';
 import SingleProduct from './SingleProduct.vue';
+import { computed } from 'vue';
+
+
+
+const products = computed(() => usePage().props.products);
 </script>
 <template>
     <section class="bg-white py-12 text-gray-700 sm:py-16 lg:py-20 ">
@@ -10,8 +16,7 @@ import SingleProduct from './SingleProduct.vue';
 
             <div class="py-4 grid grid-cols-2 gap-6 sm:grid-cols-4 sm:gap-4">
                 <!-- product here -->
-                <SingleProduct v-for="item in 8" :key="item" />
-
+                <SingleProduct :product-items="products" />
             </div>
         </div>
     </section>
