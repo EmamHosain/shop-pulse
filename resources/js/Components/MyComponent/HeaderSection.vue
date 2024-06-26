@@ -9,7 +9,7 @@ import { router, usePage } from '@inertiajs/vue3';
 
 const cartCount = computed(() => usePage().props.cart.data.count);
 const wishlistCount = computed(() => usePage().props.wishlist.data.count);
-console.log('count', wishlistCount.value)
+
 
 
 

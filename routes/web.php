@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\Admin\AdminController;
 use App\Http\Controllers\CartItemController;
 use App\Http\Controllers\CategoryController;
 use App\Http\Controllers\CheckoutController;
@@ -23,8 +24,11 @@ Route::get('/', [HomeController::class, 'index'])->name('page.home');
 
 // products start
 Route::get('/product-details', [ProductController::class, 'getProductDetails'])->name('page.productDetails');
-Route::get('/products-by-category/{slug}', [ProductController::class, 'getProductsByCategory'])->name('page.productsByCategory');
-Route::get('/products-by-brand/{slug}', [ProductController::class, 'getProductsByBrand'])->name('page.productsByBrand');
+
+// sorting products
+Route::get('/products-by-category', [ProductController::class, 'getProductsByCategory'])->name('page.productsByCategory');
+
+Route::get('/products-by-brand', [ProductController::class, 'getProductsByBrand'])->name('page.productsByBrand');
 // products end
 
 
@@ -54,7 +58,52 @@ Route::delete('/checkout/delete/{id}', [CartItemController::class, 'delete'])->n
 
 
 Route::middleware(['auth:sanctum', config('jetstream.auth_session'), 'verified'])->group(function () {
-    Route::get('/dashboard', function () {
-        return Inertia::render('Dashboard');
-    })->name('dashboard');
+    Route::get('/dashboard', [AdminController::class, 'index'])->name('dashboard');
+    Route::get('/admin/dashboard-overview', [AdminController::class, 'dashboardOverview'])->name('page.dashboardOverview');
+
+    // admin produc route start here
+    Route::get('/admin/products', [App\Http\Controllers\Admin\ProductController::class, 'productView'])->name('page.productView');
+    Route::get('/admin/create-product', [App\Http\Controllers\Admin\ProductController::class, 'createProduct'])->name('page.createProduct');
+    Route::post('/admin/create-product', [App\Http\Controllers\Admin\ProductController::class, 'storeProduct'])->name('product.store');
+    Route::get('/admin/update-product/{id}', [App\Http\Controllers\Admin\ProductController::class, 'getUpdateProductPage'])->name('page.updateProduct');
+    Route::patch('/admin/update-product/{id}', [App\Http\Controllers\Admin\ProductController::class, 'updateProduct'])->name('product.update');
+    Route::delete('/admin/delete-product/{id}', [App\Http\Controllers\Admin\ProductController::class, 'deleteProduct'])->name('product.delete');
+    // admin produc route end here
+
+
+
+
+    // admin category route start here
+    Route::get('/admin/categories', [App\Http\Controllers\Admin\CategoryController::class, 'showAllCategories'])->name('page.categoryView');
+    Route::get('/admin/update-category/{id}', [App\Http\Controllers\Admin\CategoryController::class, 'updateCategoryPage'])
+        ->name('page.updateCategory');
+    Route::patch('/admin/update-category/{id}', [App\Http\Controllers\Admin\CategoryController::class, 'updateCategory'])->name('category.update');
+    Route::get('/admin/create-category', [App\Http\Controllers\Admin\CategoryController::class, 'createCategoryPage'])->name('page.createCategory');
+    Route::post('/admin/create-category', [App\Http\Controllers\Admin\CategoryController::class, 'storeCategory'])->name('category.store');
+    Route::delete('/admin/category/{id}', [App\Http\Controllers\Admin\CategoryController::class, 'deleteCategory'])->name('category.delete');
+    // admin category route end here
+
+
+
+    // brand route start here
+    Route::get('/admin/brands', [App\Http\Controllers\Admin\BrandController::class, 'showAllBrands'])->name('page.brandView');
+    Route::get('/admin/create-brand', [App\Http\Controllers\Admin\BrandController::class, 'createBrand'])->name('page.createBrand');
+    Route::post('/admin/create-brand', [App\Http\Controllers\Admin\BrandController::class, 'storeBrand'])->name('brand.store');
+    Route::delete('/admin/brand-delete/{id}', [App\Http\Controllers\Admin\BrandController::class, 'deleteBrand'])->name('brand.delete');
+    Route::get('/admin/update-brand/{id}', [App\Http\Controllers\Admin\BrandController::class, 'updateBrandPage'])->name('page.updateBrand');
+    Route::patch('/admin/update-brand/{id}', [App\Http\Controllers\Admin\BrandController::class, 'updateBrand'])->name('brand.update');
+    // brand route end here
+
+
+
+    // category slider route start here
+    Route::delete('/admin/category-slider-remove/{id}', [App\Http\Controllers\Admin\CategorySliderController::class, 'categorySliderRemove'])->name('category.categorySliderRemove');
+    // category slider route end here
+
+
+
+
+    // iamge route 
+    Route::delete('/admin/remove-product-image/{productId}/{imageId}', [App\Http\Controllers\Admin\ProductImageController::class, 'removeProductImage'])->name('product.image.delete');
+    Route::get('/admin-profile', [AdminController::class, 'adminProfile']);
 });

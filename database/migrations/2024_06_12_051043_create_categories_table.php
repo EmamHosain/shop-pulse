@@ -15,7 +15,10 @@ return new class extends Migration
             $table->id();
             $table->string('cat_name',255)->unique();
             $table->string('slug',255)->index();
+            $table->boolean('published')->default(false);
             $table->text('cat_logo');
+            $table->text('cat_slider')->nullable();
+            $table->boolean('isSliderForCarousel')->default(false);
             $table->timestamps();
         });
     }

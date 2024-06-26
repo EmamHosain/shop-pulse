@@ -15,13 +15,16 @@ class BrandSeeder extends Seeder
      */
     public function run(): void
     {
+        $boolean = [false, true];
         $faker = Faker::create();
         for ($i = 0; $i < 10; $i++) {
             $brandName = $faker->company;
             Brand::create([
                 'brand_name' => $brandName,
-                'brand_logo'=>$faker->imageUrl,
-                'slug' => Str::slug($brandName)
+                'brand_logo' => $faker->imageUrl,
+                'slug' => Str::slug($brandName),
+                'brand_slider' => $faker->imageUrl,
+                'published' => $faker->randomElement($boolean),
             ]);
         }
     }

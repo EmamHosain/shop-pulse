@@ -4,8 +4,7 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-return new class extends Migration
-{
+return new class extends Migration {
     /**
      * Run the migrations.
      */
@@ -13,9 +12,12 @@ return new class extends Migration
     {
         Schema::create('brands', function (Blueprint $table) {
             $table->id();
-            $table->string('brand_name',255)->unique();
+            $table->string('brand_name', 255)->unique();
             $table->text('brand_logo');
-            $table->string('slug',255)->index();
+            $table->boolean('published')->default(false);
+            $table->string('slug', 255)->index();
+            $table->text('brand_slider')->nullable();
+            $table->boolean('is_banner')->default(false);
             $table->timestamps();
         });
     }

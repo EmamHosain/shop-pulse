@@ -39,16 +39,25 @@ class ProductController extends Controller
 
 
 
-    public function getProductsByCategory(Request $request, $slug)
+    public function getProductsByCategory(Request $request)
     {
 
-        $category = Category::where('slug', $slug)->firstOrFail();
-        $brands = Brand::get();
+
+        $category_slug = $request->query('category');
+        $category = Category::where('slug', $category_slug)->firstOrFail();
+
+        $products = $category->products()->paginate(8)->withQueryString();
+
+
+
+
+
         return Inertia::render('Guest/SortingProducts', [
-            'products' => $category->products,
-            'brands' => BrandResource::collection($brands)
+            'products' => $products,
+            'brands' => BrandResource::collection(Brand::get())
         ]);
     }
+
 
 
     public function getProductsByBrand(Request $request, $slug)

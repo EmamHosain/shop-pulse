@@ -61,11 +61,20 @@ class Product extends Model
 
 
 
-    // Example of an accessor (optional, if you need it)
-    public function getDiscountedPriceAttribute()
+
+
+    public static function getDiscountAmount($price, $percentage)
     {
-        // Calculate the discounted price
-        return $this->price - ($this->price * ($this->discount_percentage / 100));
+
+        $discount_amount = $price * $percentage / 100;
+        return $discount_amount;
+
+    }
+    public static function getDiscountPrice($price, $percentage)
+    {
+        $discount_amount = $price * $percentage / 100;
+        $discount_price = round($price - $discount_amount);
+        return $discount_price;
     }
 
 }

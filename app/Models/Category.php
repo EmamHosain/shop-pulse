@@ -18,7 +18,10 @@ class Category extends Model
     protected $fillable = [
         'cat_name',
         'slug',
-        'cat_logo'
+        'cat_logo',
+        'published',
+        'cat_slider',
+        'isSliderForCarousel'
     ];
 
     // Add any necessary casts or date properties
@@ -35,8 +38,8 @@ class Category extends Model
         return $this->belongsToMany(Product::class, 'category_product'); // Assuming a many-to-many relationship
     }
 
-    
-    
-
    
+
+
+
 }

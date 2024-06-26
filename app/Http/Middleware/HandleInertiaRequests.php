@@ -42,7 +42,7 @@ class HandleInertiaRequests extends Middleware
      */
     public function share(Request $request): array
     {
-        $categories = Category::get();
+        $categories = Category::select(['id','cat_name','cat_logo','slug'])->where('published', true)->get();
         $brands = Brand::get();
 
         return [

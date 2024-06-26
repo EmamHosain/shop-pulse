@@ -31,7 +31,7 @@ const breakpoints = {
 const categories = usePage().props.categories.data;
 
 const getProductsByCategory = (slug) => {
-    router.get(route('page.productsByCategory', slug), '', {
+    router.get(`${route('page.productsByCategory')}?category=${slug}`, '', {
         preserveState: true,
         preserveScroll: true,
         replace: true,
@@ -53,7 +53,7 @@ const getProductsByCategory = (slug) => {
             <Slide v-for="category in categories" :key="category.id" class="flex flex-col">
                 <div class="carousel__item flex flex-col items-center justify-center">
 
-                    <Link class=" block w-full item " :href="route('page.productsByCategory', category.slug)">
+                    <Link class=" block w-full item " as="button" :href="`${route('page.productsByCategory')}?category=${category.slug}`">
                     <img src="../../../assets/images-1/blog_img4.jpg" class="image" alt="">
                     </Link>
 

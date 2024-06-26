@@ -1,7 +1,5 @@
 <script setup>
 import { ref, computed } from 'vue';
-import TabView from 'primevue/tabview';
-import TabPanel from 'primevue/tabpanel';
 
 
 
@@ -250,7 +248,7 @@ const decrementQuantity = () => {
             <!-- cart long description start here -->
 
 
-            <div class="mt-4">
+            <!-- <div class="mt-4">
 
                 <TabView v-model:activeIndex="active">
 
@@ -282,7 +280,7 @@ const decrementQuantity = () => {
                 </TabView>
 
 
-            </div>
+            </div> -->
             <!-- cart long description end here-->
 
 

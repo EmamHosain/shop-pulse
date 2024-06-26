@@ -18,7 +18,10 @@ class Brand extends Model
     protected $fillable = [
         'brand_name',
         'brand_logo',
-        'slug'
+        'slug',
+        'brand_slider',
+        'is_banner',
+        'published',
     ];
 
     // Add any necessary casts or date properties
@@ -34,9 +37,5 @@ class Brand extends Model
         return $this->hasMany(Product::class); // Assuming a Brand can have many Products
     }
 
-    // Example of a mutator (optional, if you need it)
-    public function setSlugAttribute($value)
-    {
-        $this->attributes['slug'] = \Str::slug($value);
-    }
+    
 }
