@@ -43,18 +43,59 @@ class ProductController extends Controller
     {
 
 
+
+
         $category_slug = $request->query('category');
         $category = Category::where('slug', $category_slug)->firstOrFail();
+        $brand_slug = $request->query('brand');
+        $brands = Brand::get();
+        $brand_id = $brands->where('slug', $brand_slug)->value('id');
 
-        $products = $category->products()->paginate(8)->withQueryString();
 
 
+        $orderBy = $request->query('order_by');
+        $minPrice = $request->query('price', 1);
+        $maxPrice = $request->query('to', 10000);
+
+
+        $page_size = $request->query('page_size') ?? 12;
+
+
+        $products = $category->products()
+            ->when($orderBy, function ($query) use ($orderBy) {
+                if ($orderBy === 'a-z') {
+                    $query->orderBy('title', 'asc');
+                }
+                if ($orderBy === 'z-a') {
+                    $query->orderBy('title', 'desc');
+                }
+                if ($orderBy === 'low-to-high') {
+                    $query->orderByRaw('CASE WHEN discount_price  THEN CAST(discount_price AS DECIMAL(10,2)) ELSE CAST(price AS DECIMAL(10,2)) END ASC');
+                }
+                if ($orderBy === 'high-to-low') {
+                    $query->orderByRaw('CASE WHEN discount_price  THEN CAST(discount_price AS DECIMAL(10,2)) ELSE CAST(price AS DECIMAL(10,2)) END DESC');
+                }
+            })
+            ->when($minPrice || $maxPrice, function ($query) use ($minPrice, $maxPrice) {
+                if ($minPrice && $maxPrice) {
+                    $query->whereRaw('CASE WHEN discount_price THEN CAST(discount_price AS DECIMAL(10,2)) ELSE CAST(price AS DECIMAL(10,2)) END BETWEEN ? AND ?', [$minPrice, $maxPrice]);
+                } elseif ($minPrice) {
+                    $query->whereRaw('CASE WHEN discount_price THEN CAST(discount_price AS DECIMAL(10,2)) ELSE CAST(price AS DECIMAL(10,2)) END >= ?', [$minPrice]);
+                } elseif ($maxPrice) {
+                    $query->whereRaw('CASE WHEN discount_price THEN CAST(discount_price AS DECIMAL(10,2)) ELSE CAST(price AS DECIMAL(10,2)) END <= ?', [$maxPrice]);
+                }
+            })
+            ->when($brand_id, function ($query) use ($brand_id) {
+                $query->where('brand_id', $brand_id);
+            })
+            ->paginate($page_size)->withQueryString();
 
 
 
         return Inertia::render('Guest/SortingProducts', [
             'products' => $products,
-            'brands' => BrandResource::collection(Brand::get())
+            'brands' => BrandResource::collection($brands),
+            'selectedCategorySlug' => $category->slug
         ]);
     }
 

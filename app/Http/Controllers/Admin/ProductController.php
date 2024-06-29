@@ -18,7 +18,64 @@ class ProductController extends Controller
 {
     public function productView(Request $request)
     {
-        $products = Product::with(['categories', 'brand', 'productImages'])->orderByDesc('id')->paginate(10);
+        $search = $request->query('search');
+        $category = $request->query('category');
+        $brand = $request->query('brand');
+        $price = $request->query('price');
+        $discount_price = $request->query('dis_price');
+        $discount_amount = $request->query('dis_amount');
+        $stock = $request->query('stock');
+        $discount_percentage = $request->query('dis_percentage');
+        $status = $request->query('status');
+
+
+
+
+
+
+        $products = Product::with(['categories', 'brand', 'productImages'])
+            ->when($search, function ($query) use ($search) {
+                $query->where('title', 'LIKE', "%$search%");
+            })
+            ->when($price, function ($query) use ($price) {
+                $query->orderBy('price', $price);
+            })
+            ->when($discount_price, function ($query) use ($discount_price) {
+                $query->orderBy('discount_price', $discount_price);
+            })
+            ->when($discount_amount, function ($query) use ($discount_amount) {
+                $query->orderBy('discount_amount', $discount_amount);
+            })
+            ->when($stock, function ($query) use ($stock) {
+                $query->orderBy('quantity', $stock);
+            })
+            ->when($discount_percentage, function ($query) use ($discount_percentage) {
+                $query->orderBy('discount_percentage', $discount_percentage);
+            })
+            ->when($status, function ($query) use ($status) {
+                if ($status === 'active') {
+                    $query->where('published', true);
+                } else {
+                    $query->where('published', false);
+                }
+            })
+            ->when($category, function ($query) use ($category) {
+                // products and categoris they are many to many relationship, get products where $product->slug === $category->slug
+                $query->whereHas('categories', function ($query) use ($category) {
+                    $query->where('slug', $category);
+                });
+            })
+            ->when($brand, function ($query) use ($brand) {
+                $query->whereHas('brand', function ($query) use ($brand) {
+                    $query->where('slug', $brand);
+                });
+            })
+            ->orderByDesc('id')->paginate(10);
+
+
+
+
+
         return Inertia::render('Admin/Product/ProductView', [
             'products' => $products
         ]);

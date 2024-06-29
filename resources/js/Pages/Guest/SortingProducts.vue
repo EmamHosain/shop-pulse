@@ -18,6 +18,8 @@ import Squares2X2Icon from '@/Components/Icons/Squares2X2Icon.vue';
 import XMarkIcon from '@/Components/Icons/XMarkIcon.vue';
 
 
+
+
 import {
     Dialog,
     DialogPanel,
@@ -112,32 +114,12 @@ const getProductsByCategory = (slug) => {
 }
 
 
-watch(selectedBrand, (newValue) => {
-    router.get(route('page.productsByBrand', newValue), '', {
-        preserveState: true,
-        preserveScroll: true,
-        replace: true,
-        onError: (errors) => {
-            console.log('sort brand error', errors)
-        }
-    });
 
-})
+
 // end here
 const pricetStart = ref(0);
-const priceEnd = ref(1000);
+const priceEnd = ref(10000);
 const sortingPrice = ref([pricetStart.value, priceEnd.value])
-
-const priceFileter = () => {
-    const start = sortingPrice.value[0]
-    const end = sortingPrice.value[1]
-
-    // router.get(`${route('')}`)
-}
-
-
-
-
 
 
 
@@ -158,14 +140,44 @@ const sortOptions = [
 ]
 
 const sortByPosition = (positionType) => {
-    // router.get(`${route('page.productsByCategory')}`)
+
+    router.get(`${usePage().url}&order_by=${positionType}`, '', {
+        preserveScroll: true,
+        preserveState: true,
+    })
 }
 
+const sortByProductsShow = (size) => {
 
+    if (size === 'defult') {
+        size = 12
+    }
+    router.get(`${usePage().url}&page_size=${size}`, '', {
+        preserveScroll: true,
+        preserveState: true,
+    })
+}
 
+const sortByPrice = () => {
+    const start = sortingPrice.value[0]
+    const end = sortingPrice.value[1]
 
+    router.get(`${usePage().url}&price=${start}&to=${end}`, '', {
+        preserveScroll: true,
+        preserveState: true,
+    })
+}
+watch(selectedBrand, (newValue) => {
+    router.get(`${usePage().url}&brand=${newValue}`, '', {
+        preserveState: true,
+        preserveScroll: true,
+        // replace: true,
+        onError: (errors) => {
+            console.log('sort brand error', errors)
+        }
+    });
 
-
+})
 
 </script>
 
@@ -312,9 +324,10 @@ const sortByPosition = (positionType) => {
                                                 <div class="py-1">
                                                     <MenuItem v-for="option in showProducts" :key="option.name"
                                                         v-slot="{ active }">
-                                                    <a :href="option.href" class=" capitalize"
+                                                    <button type="button" @click="sortByProductsShow(option.name)"
+                                                        class=" capitalize"
                                                         :class="[option.current ? 'font-medium text-gray-900' : 'text-gray-500', active ? 'bg-gray-100' : '', 'block px-4 py-2 text-sm']">{{
-                                                            option.name }}</a>
+                                                            option.name }}</button>
                                                     </MenuItem>
                                                 </div>
                                             </MenuItems>
@@ -357,7 +370,7 @@ const sortByPosition = (positionType) => {
                                                     <MenuItem v-for="option in sortOptions" :key="option.name"
                                                         v-slot="{ active }">
                                                     <button type="button" @click="sortByPosition(option.value)"
-                                                         class=" capitalize"
+                                                        class=" capitalize"
                                                         :class="[option.current ? 'font-medium text-gray-900' : 'text-gray-500', active ? 'bg-gray-100' : '', 'block px-4 py-2 text-sm']">{{
                                                             option.name }}</button>
                                                     </MenuItem>
@@ -463,7 +476,7 @@ const sortByPosition = (positionType) => {
                                                 </div>
                                                 <p class="">Range</p>
                                                 <p class=" font-bold"> {{ sortingPrice[0] }} - {{ sortingPrice[1] }}</p>
-                                                <button @click="priceFileter" class="px-4 py-1 bg-blue-400 text-white"
+                                                <button @click="sortByPrice" class="px-4 py-1 bg-blue-400 text-white"
                                                     type="button">Filter</button>
 
                                             </div>

@@ -17,8 +17,47 @@ class CategoryController extends Controller
 {
     public function showAllCategories(Request $request)
     {
-        $categories = Category::withCount('products')->orderByDesc('id')->paginate(5);
+        $search_name = $request->query('search');
+        $status = $request->query('status');
+        $order_by = $request->query('order_by');
+        $sort_by_slider = $request->query('sort_by_slider');
+        $sort_by_carousel = $request->query('sort_by_carousel');
 
+
+        $categories = Category::withCount('products')
+            ->when($search_name, function ($query) use ($search_name) {
+                $query->where('cat_name', 'LIKE', "%$search_name%");
+            })
+            ->when($status, function ($query) use ($status) {
+                if ($status === 'active') {
+                    $query->where('published', true);
+                } else {
+                    $query->where('published', false);
+                }
+            })
+            ->when($order_by, function ($query) use ($order_by) {
+                if ($order_by === 'newest') {
+                    $query->orderBy('id', 'desc');
+                } else {
+                    $query->orderBy('id', 'asc');
+                }
+            })
+            ->when($sort_by_slider, function ($query) use ($sort_by_slider) {
+                if ($sort_by_slider === 'true') {
+                    $query->whereNot('cat_slider', null);
+                } else {
+                    // $query->where('cat_slider', '===', null);
+                    $query->where('cat_slider', null);
+                }
+            })
+            ->when($sort_by_carousel, function ($query) use ($sort_by_carousel) {
+                if ($sort_by_carousel === 'true') {
+                    $query->where('isSliderForCarousel', true);
+                } else {
+                    $query->where('isSliderForCarousel', false);
+                }
+            })
+            ->orderByDesc('id')->paginate(5);
         return Inertia::render('Admin/Category/CategoryView', [
             'categories' => CategoryResource::collection($categories),
         ]);

@@ -1,13 +1,135 @@
 <script setup>
 import AdminLayout from '@/Layouts/AdminLayout.vue';
-import { Head, usePage, Link } from '@inertiajs/vue3';
-import { ref, onMounted, computed } from 'vue';
+import { Head, usePage, Link, router } from '@inertiajs/vue3';
+import { ref, onMounted, computed, watch } from 'vue';
 import DotButton from '../../../Components/AdminComponent/LayoutComponent/DotButton.vue'
 import { Menu, MenuButton, MenuItem, MenuItems } from '@headlessui/vue'
 import DownArrowIcon from '@/Components/Icons/DownArrowIcon.vue';
 
 
 const products = computed(() => usePage().props.products.data);
+const categories = computed(() => usePage().props.categories.data);
+const brands = computed(() => usePage().props.brands.data);
+
+
+
+// sorting code start here
+const refreshProducts = () => {
+    router.get(route('page.productView'), '', {
+        preserveScroll: true,
+        preserveState: true
+    })
+}
+
+const searchProduct = ref('');
+const sortByCategory = ref('');
+const sortByBrand = ref('');
+const orderBy = ref('');
+const sortByStatus = ref('');
+watch(searchProduct, (newSearch) => {
+    router.get(`${route('page.productView')}?search=${newSearch}`, '', {
+        preserveScroll: true,
+        preserveState: true,
+    })
+})
+
+watch(sortByCategory, (newCategory) => {
+    if (newCategory !== '') {
+        router.get(`${route('page.productView')}?category=${newCategory}`, '', {
+            preserveScroll: true,
+            preserveState: true,
+        })
+    } else {
+        refreshProducts();
+    }
+
+})
+watch(sortByBrand, (newBrand) => {
+    if (newBrand !== '') {
+        router.get(`${route('page.productView')}?brand=${newBrand}`, '', {
+            preserveScroll: true,
+            preserveState: true,
+        })
+    } else {
+        refreshProducts();
+    }
+
+})
+watch(sortByStatus, (newStatus) => {
+    if (newStatus !== '') {
+        router.get(`${route('page.productView')}?status=${newStatus}`, '', {
+            preserveScroll: true,
+            preserveState: true,
+        })
+    } else {
+        refreshProducts();
+    }
+
+})
+
+watch(orderBy, (newOrder) => {
+    if (newOrder !== '') {
+        if (newOrder === 'price_asc') {
+            router.get(`${route('page.productView')}?price=asc`, '', {
+                preserveScroll: true,
+                preserveState: true,
+            })
+        } else if (newOrder === 'price_desc') {
+            router.get(`${route('page.productView')}?price=desc`, '', {
+                preserveScroll: true,
+                preserveState: true,
+            })
+        } else if (newOrder === 'dis_price_asc') {
+            router.get(`${route('page.productView')}?dis_price=asc`, '', {
+                preserveScroll: true,
+                preserveState: true,
+            })
+        } else if (newOrder === 'dis_price_desc') {
+            router.get(`${route('page.productView')}?dis_price=desc`, '', {
+                preserveScroll: true,
+                preserveState: true,
+            })
+        } else if (newOrder === 'dis_amount_asc') {
+            router.get(`${route('page.productView')}?dis_amount=asc`, '', {
+                preserveScroll: true,
+                preserveState: true,
+            })
+        } else if (newOrder === 'dis_amount_desc') {
+            router.get(`${route('page.productView')}?dis_amount=desc`, '', {
+                preserveScroll: true,
+                preserveState: true,
+            })
+        } else if (newOrder === 'stock_asc') {
+            router.get(`${route('page.productView')}?stock=asc`, '', {
+                preserveScroll: true,
+                preserveState: true,
+            })
+        } else if (newOrder === 'stock_desc') {
+            router.get(`${route('page.productView')}?stock=desc`, '', {
+                preserveScroll: true,
+                preserveState: true,
+            })
+        } else if (newOrder === 'dis_percentage_asc') {
+            router.get(`${route('page.productView')}?dis_percentage=asc`, '', {
+                preserveScroll: true,
+                preserveState: true,
+            })
+        } else if (newOrder === 'dis_percentage_desc') {
+            router.get(`${route('page.productView')}?dis_percentage=desc`, '', {
+                preserveScroll: true,
+                preserveState: true,
+            })
+        }
+
+
+
+
+
+    } else {
+        refreshProducts();
+    }
+
+})
 
 </script>
 <template>
@@ -65,7 +187,8 @@ const products = computed(() => usePage().props.products.data);
 
                         <div
                             class="flex flex-col md:flex-row items-stretch md:items-center md:space-x-3 space-y-3 md:space-y-0 justify-between mx-4 py-4 border-t dark:border-gray-700">
-                            <!-- <div class="w-full md:w-1/2">
+                            <!-- search start here -->
+                            <div class="w-full md:w-1/2">
                                 <form class="flex items-center">
                                     <label for="simple-search" class="sr-only">Search</label>
                                     <div class="relative w-full">
@@ -76,86 +199,108 @@ const products = computed(() => usePage().props.products.data);
                                                     d="M8 4a4 4 0 100 8 4 4 0 000-8zM2 8a6 6 0 1110.89 3.476l4.817 4.817a1 1 0 01-1.414 1.414l-4.816-4.816A6 6 0 012 8z" />
                                             </svg>
                                         </div>
-                                        <input type="text" id="simple-search" placeholder="Search for products" required=""
+                                        <input v-model="searchProduct" type="text" id="simple-search"
+                                            placeholder="Search for products"
                                             class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-500 focus:border-primary-500 block w-full pl-10 p-2 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500">
                                     </div>
                                 </form>
-                            </div> -->
+                            </div>
+                            <!-- search end here -->
+
+
+
+
                             <div
                                 class="w-full md:w-auto flex flex-col md:flex-row space-y-2 md:space-y-0 items-stretch md:items-center justify-end md:space-x-3 flex-shrink-0">
 
 
 
 
+                                <!-- sort by category start-->
                                 <div class="flex items-center space-x-3 w-full md:w-auto">
 
                                     <form class="max-w-sm mx-auto  sm:w-full">
 
-                                        <select id="small"
+                                        <select v-model="sortByCategory" id="small"
                                             class="block w-full px-4 pr-8 text-sm text-gray-900 border border-gray-300 rounded-lg bg-gray-50 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500">
-                                            <option selected>sort by category</option>
-                                            <option value="US">United States</option>
-                                            <option value="CA">Canada</option>
-                                            <option value="FR">France</option>
-                                            <option value="DE">Germany</option>
+                                            <option value="" selected>sort by category</option>
+                                            <option v-for="category in categories" :key="category.id"
+                                                :value="category.slug">{{ category.cat_name }}</option>
+
                                         </select>
 
 
                                     </form>
 
                                 </div>
+                                <!-- sort by category end-->
 
                                 <div class="flex items-center space-x-3 w-full md:w-auto">
 
                                     <form class="max-w-sm mx-auto  sm:w-full">
 
-                                        <select id="small"
+                                        <select v-model="sortByBrand" id="small"
                                             class="block w-full px-4 pr-8 text-sm text-gray-900 border border-gray-300 rounded-lg bg-gray-50 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500">
-                                            <option selected>sort by brand</option>
-                                            <option value="US">United States</option>
-                                            <option value="CA">Canada</option>
-                                            <option value="FR">France</option>
-                                            <option value="DE">Germany</option>
+                                            <option value="" selected>sort by brand</option>
+                                            <option v-for="brand in brands" :key="brand.id" :value="brand.slug">{{
+                                                brand.brand_name }}</option>
+
                                         </select>
 
 
                                     </form>
 
                                 </div>
-                                <div class="flex items-center space-x-3 w-full md:w-auto">
-
-                                    <form class="max-w-sm mx-auto  sm:w-full">
-
-                                        <select id="small"
-                                            class="block w-full px-4 pr-8 text-sm text-gray-900 border border-gray-300 rounded-lg bg-gray-50 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500">
-                                            <option selected>sort by price</option>
-                                            <option value="US">United States</option>
-                                            <option value="CA">Canada</option>
-                                            <option value="FR">France</option>
-                                            <option value="DE">Germany</option>
-                                        </select>
-
-
-                                    </form>
-
-                                </div>
+                                <!-- sort by status -->
                                 <div class="flex items-center space-x-3 w-full md:w-auto">
 
                                     <form class="max-w-sm mx-auto sm:w-full">
 
-                                        <select id="small"
+                                        <select v-model="sortByStatus" id="small"
                                             class="block w-full px-4 pr-8 text-sm text-gray-900 border border-gray-300 rounded-lg bg-gray-50 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500">
-                                            <option selected>sort by discount price</option>
-                                            <option value="US">United States</option>
-                                            <option value="CA">Canada</option>
-                                            <option value="FR">France</option>
-                                            <option value="DE">Germany</option>
+                                            <option value="" selected>sort by status</option>
+                                            <option value="active">Active</option>
+                                            <option value="deactive">Deactive</option>
+
+
                                         </select>
 
 
                                     </form>
 
                                 </div>
+
+
+                                <!-- order by ascending and descending -->
+                                <div class="flex items-center space-x-3 w-full md:w-auto">
+
+                                    <form class="max-w-sm mx-auto  sm:w-full">
+
+                                        <select v-model="orderBy" id="small"
+                                            class="block w-full px-4 pr-8 text-sm text-gray-900 border border-gray-300 rounded-lg bg-gray-50 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500">
+                                            <option value="" selected>Order by</option>
+                                            <!-- price -->
+                                            <option value="price_asc">Price(ASC)</option>
+                                            <option value="price_desc">Price(DESC)</option>
+                                            <!-- discount price -->
+                                            <option value="dis_price_asc">Discount Price(ASC)</option>
+                                            <option value="dis_price_desc">Discount Price(DESC)</option>
+                                            <!-- discount amount -->
+                                            <option value="dis_amount_asc">Discount Amount(ASC)</option>
+                                            <option value="dis_amount_desc">Discount Amount(DESC)</option>
+                                            <!-- stock -->
+                                            <option value="stock_asc">Stock(ASC)</option>
+                                            <option value="stock_desc">Stock(DESC)</option>
+                                            <!-- discount percentage -->
+                                            <option value="dis_percentage_asc">Discount Percentage(ASC)</option>
+                                            <option value="dis_percentage_desc">Discount Percentage(DESC)</option>
+                                        </select>
+
+
+                                    </form>
+
+                                </div>
+
 
 
 
@@ -186,6 +331,7 @@ const products = computed(() => usePage().props.products.data);
                                         </th>
                                         <th scope="col" class="p-4">Product</th>
                                         <th scope="col" class="p-4">Category</th>
+                                        <th scope="col" class="p-4 capitalize">brand</th>
                                         <th scope="col" class="p-4">Stock</th>
                                         <th scope="col" class="p-4">status</th>
                                         <th scope="col" class="p-4">price</th>
@@ -223,6 +369,15 @@ const products = computed(() => usePage().props.products.data);
                                                     }}</span>
                                             </div>
                                         </td>
+                                        <td class="px-4 py-3">
+                                            <div class="flex flex-wrap gap-1">
+                                                <span
+                                                    class="bg-green-500 text-white text-xs font-medium px-2 py-0.5 rounded dark:bg-primary-900 dark:text-primary-300 whitespace-nowrap ">{{
+                                                        product.brand.brand_name
+                                                    }}</span>
+                                            </div>
+                                        </td>
+
                                         <td class="px-4 py-3 font-medium text-gray-900 whitespace-nowrap dark:text-white">
                                             <div class="flex items-center">
                                                 <div v-if="product.quantity < 5"
@@ -240,11 +395,11 @@ const products = computed(() => usePage().props.products.data);
 
                                         </td>
                                         <td class="px-4 py-3 font-medium text-gray-900 whitespace-nowrap dark:text-white">
-                                            {{ product.price }} Tk</td>
+                                            {{ Math.round(product.price) }} Tk</td>
                                         <td class="px-4 py-3 font-medium text-gray-900 whitespace-nowrap dark:text-white">
                                             {{ product.discount_price }} Tk</td>
                                         <td class="px-4 py-3 font-medium text-gray-900 whitespace-nowrap dark:text-white">
-                                            {{ product.discount_amount }} Tk</td>
+                                            {{ Math.round(product.discount_amount) }} Tk</td>
                                         <td class="px-4 py-3">{{ product.discount_percentage }}%</td>
 
                                         <td class="px-4 py-3 font-medium text-gray-900 whitespace-nowrap dark:text-white">

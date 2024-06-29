@@ -14,7 +14,47 @@ class BrandController extends Controller
 {
     public function showAllBrands(Request $request)
     {
-        $brands = Brand::withCount('products')->orderByDesc('id')->get();
+
+        $search = $request->query('search');
+        $status = $request->query('status');
+        $order_by = $request->query('order_by_product_count');
+        $sort_by_slider = $request->query('sort_by_slider');
+        $sort_by_banner = $request->query('sort_by_banner');
+
+        $brands = Brand::withCount('products')
+            ->when($search, function ($query) use ($search) {
+                $query->where('brand_name', 'LIKE', "%$search%");
+            })
+            ->when($status, function ($query) use ($status) {
+                if ($status === 'active') {
+                    $query->where('published', true);
+                } else {
+                    $query->where('published', false);
+                }
+            })
+
+            ->when($order_by, function ($query) use ($order_by) {
+                $query->orderBy('products_count', $order_by);
+            })
+            ->when($sort_by_slider, function ($query) use ($sort_by_slider) {
+                if ($sort_by_slider === 'true') {
+                    $query->whereNot('brand_slider', null);
+                } else {
+                    $query->where('brand_slider', null);
+                }
+            })
+            ->when($sort_by_banner, function ($query) use ($sort_by_banner) {
+                if ($sort_by_banner === 'true') {
+                    $query->where('is_banner', true);
+                } else {
+                    $query->where('is_banner', false);
+                }
+            })
+
+            ->orderByDesc('id')->get();
+
+
+
         $allBrands = $brands->map(function ($brand) {
             return [
                 'id' => $brand->id,
@@ -25,6 +65,7 @@ class BrandController extends Controller
                 'created_at' => DateHelper::getFormatDate($brand->created_at),
                 'updated_at' => DateHelper::getFormatDate($brand->updated_at),
                 'products_count' => $brand->products_count,
+                'published' => $brand->published,
                 'is_banner' => $brand->is_banner,
             ];
         });

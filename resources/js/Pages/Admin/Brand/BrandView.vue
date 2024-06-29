@@ -1,7 +1,7 @@
 <script setup>
 import AdminLayout from '@/Layouts/AdminLayout.vue';
 import { Head, usePage, Link, router } from '@inertiajs/vue3';
-import { ref, onMounted, computed } from 'vue';
+import { ref, onMounted, computed, watch } from 'vue';
 import DotButton from '../../../Components/AdminComponent/LayoutComponent/DotButton.vue'
 import { Menu, MenuButton, MenuItem, MenuItems } from '@headlessui/vue'
 import DownArrowIcon from '@/Components/Icons/DownArrowIcon.vue';
@@ -11,9 +11,6 @@ const props = defineProps({
 })
 
 const brands = computed(() => props.brand);
-
-
-
 const deleteBrand = (id) => {
     router.delete(route('brand.delete', { id: id }), {
         onSuccess: () => {
@@ -34,6 +31,71 @@ const deleteBrand = (id) => {
         }
     })
 }
+
+// brand sorting code start here
+const refreshBrands = () => {
+    router.get(route('page.brandView'), '')
+}
+
+const searchForBrand = ref('');
+const sortByStatus = ref('');
+const sortByProductCount = ref('');
+const sortByslider = ref('');
+const sortByBanner = ref('');
+watch(searchForBrand, (search) => {
+    router.get(`${route('page.brandView')}?search=${search}`, '', {
+        preserveScroll: true,
+        preserveState: true,
+    })
+})
+
+watch(sortByStatus, (status) => {
+    if (status !== '') {
+        router.get(`${route('page.brandView')}?status=${status}`, '', {
+            preserveScroll: true,
+            preserveState: true,
+        });
+    } else {
+        refreshBrands();
+    }
+});
+
+watch(sortByProductCount, (type) => {
+    if (type !== '') {
+        router.get(`${route('page.brandView')}?order_by_product_count=${type}`, '', {
+            preserveScroll: true,
+            preserveState: true,
+        });
+    } else {
+        refreshBrands();
+    }
+});
+watch(sortByslider, (slider) => {
+    if (slider !== '') {
+        router.get(`${route('page.brandView')}?sort_by_slider=${slider}`, '', {
+            preserveScroll: true,
+            preserveState: true,
+        });
+    } else {
+        refreshBrands();
+    }
+});
+watch(sortByBanner, (banner) => {
+    if (banner !== '') {
+        router.get(`${route('page.brandView')}?sort_by_banner=${banner}`, '', {
+            preserveScroll: true,
+            preserveState: true,
+        });
+    } else {
+        refreshBrands();
+    }
+});
+
+// brand sorting code end here
+
+
+
+
 
 
 
@@ -91,22 +153,23 @@ const deleteBrand = (id) => {
 
                     <div
                         class="flex flex-col md:flex-row items-stretch md:items-center md:space-x-3 space-y-3 md:space-y-0 justify-between mx-4 py-4 border-t dark:border-gray-700">
-                        <!-- <div class="w-full md:w-1/2">
-                                <form class="flex items-center">
-                                    <label for="simple-search" class="sr-only">Search</label>
-                                    <div class="relative w-full">
-                                        <div class="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none">
-                                            <svg aria-hidden="true" class="w-5 h-5 text-gray-500 dark:text-gray-400"
-                                                fill="currentColor" viewbox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
-                                                <path fill-rule="evenodd" clip-rule="evenodd"
-                                                    d="M8 4a4 4 0 100 8 4 4 0 000-8zM2 8a6 6 0 1110.89 3.476l4.817 4.817a1 1 0 01-1.414 1.414l-4.816-4.816A6 6 0 012 8z" />
-                                            </svg>
-                                        </div>
-                                        <input type="text" id="simple-search" placeholder="Search for products" required=""
-                                            class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-500 focus:border-primary-500 block w-full pl-10 p-2 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500">
+                        <div class="w-full md:w-1/2">
+                            <form class="flex items-center">
+                                <label for="simple-search" class="sr-only">Search</label>
+                                <div class="relative w-full">
+                                    <div class="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none">
+                                        <svg aria-hidden="true" class="w-5 h-5 text-gray-500 dark:text-gray-400"
+                                            fill="currentColor" viewbox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
+                                            <path fill-rule="evenodd" clip-rule="evenodd"
+                                                d="M8 4a4 4 0 100 8 4 4 0 000-8zM2 8a6 6 0 1110.89 3.476l4.817 4.817a1 1 0 01-1.414 1.414l-4.816-4.816A6 6 0 012 8z" />
+                                        </svg>
                                     </div>
-                                </form>
-                            </div> -->
+                                    <input v-model="searchForBrand" type="text" id="simple-search"
+                                        placeholder="Search for brand name"
+                                        class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-500 focus:border-primary-500 block w-full pl-10 p-2 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500">
+                                </div>
+                            </form>
+                        </div>
                         <div
                             class="w-full md:w-auto flex flex-col md:flex-row space-y-2 md:space-y-0 items-stretch md:items-center justify-end md:space-x-3 flex-shrink-0">
 
@@ -117,13 +180,13 @@ const deleteBrand = (id) => {
 
                                 <form class="max-w-sm mx-auto  sm:w-full">
 
-                                    <select id="small"
+                                    <select v-model="sortByStatus" id="small"
                                         class="block w-full px-4 pr-8 text-sm text-gray-900 border border-gray-300 rounded-lg bg-gray-50 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500">
-                                        <option selected>sort by category</option>
-                                        <option value="US">United States</option>
-                                        <option value="CA">Canada</option>
-                                        <option value="FR">France</option>
-                                        <option value="DE">Germany</option>
+                                        <option value="" selected>sort by status</option>
+                                        <option class=" capitalize" value="active">active</option>
+                                        <option class="capitalize" value="deactive">deactive</option>
+
+
                                     </select>
 
 
@@ -135,30 +198,29 @@ const deleteBrand = (id) => {
 
                                 <form class="max-w-sm mx-auto  sm:w-full">
 
-                                    <select id="small"
+                                    <select v-model="sortByProductCount" id="small"
                                         class="block w-full px-4 pr-8 text-sm text-gray-900 border border-gray-300 rounded-lg bg-gray-50 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500">
-                                        <option selected>sort by brand</option>
-                                        <option value="US">United States</option>
-                                        <option value="CA">Canada</option>
-                                        <option value="FR">France</option>
-                                        <option value="DE">Germany</option>
+                                        <option value="" selected>order by product count</option>
+                                        <option value="asc">ASC</option>
+                                        <option value="desc">DESC</option>
+
+
                                     </select>
 
 
                                 </form>
 
                             </div>
+
                             <div class="flex items-center space-x-3 w-full md:w-auto">
 
                                 <form class="max-w-sm mx-auto  sm:w-full">
 
-                                    <select id="small"
+                                    <select v-model="sortByslider" id="small"
                                         class="block w-full px-4 pr-8 text-sm text-gray-900 border border-gray-300 rounded-lg bg-gray-50 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500">
-                                        <option selected>sort by price</option>
-                                        <option value="US">United States</option>
-                                        <option value="CA">Canada</option>
-                                        <option value="FR">France</option>
-                                        <option value="DE">Germany</option>
+                                        <option value="" selected class=" capitalize">sort by slider</option>
+                                        <option :value="true">True</option>
+                                        <option :value="false">False</option>
                                     </select>
 
 
@@ -169,13 +231,11 @@ const deleteBrand = (id) => {
 
                                 <form class="max-w-sm mx-auto sm:w-full">
 
-                                    <select id="small"
+                                    <select v-model="sortByBanner" id="small"
                                         class="block w-full px-4 pr-8 text-sm text-gray-900 border border-gray-300 rounded-lg bg-gray-50 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500">
-                                        <option selected>sort by discount price</option>
-                                        <option value="US">United States</option>
-                                        <option value="CA">Canada</option>
-                                        <option value="FR">France</option>
-                                        <option value="DE">Germany</option>
+                                        <option value="" selected>sort by banner</option>
+                                        <option :value="true">True</option>
+                                        <option :value="false">False</option>
                                     </select>
 
 
@@ -242,8 +302,10 @@ const deleteBrand = (id) => {
 
 
                                     <td class="px-4 py-3 font-medium text-gray-900 whitespace-nowrap dark:text-white">
-                                        <span v-if="brand.published === 1" class="text-green-500 capitalize">active</span>
-                                        <span v-else class="text-red-500 capitalize">deactive</span>
+                                        <span v-if="Boolean(brand.published) === true"
+                                            class="text-green-500 capitalize">active</span>
+                                        <span v-if="Boolean(brand.published) === false"
+                                            class="text-red-500 capitalize">deactive</span>
 
                                     </td>
                                     <td class="px-4 py-3 font-medium text-gray-900 whitespace-nowrap dark:text-white">
@@ -309,7 +371,8 @@ const deleteBrand = (id) => {
                                                         <MenuItem v-slot="{ active }">
 
 
-                                                        <Link as="button" :href="route('page.updateBrand', { id: brand.id })"
+                                                        <Link as="button"
+                                                            :href="route('page.updateBrand', { id: brand.id })"
                                                             class=" capitalize"
                                                             :class="[active ? 'bg-gray-100 text-gray-900' : 'text-gray-700', 'block px-4 py-2 text-sm']">
                                                         edit</Link>
