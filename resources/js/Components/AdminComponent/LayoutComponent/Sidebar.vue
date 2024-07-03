@@ -1,6 +1,26 @@
 <script setup>
 import { Link } from "@inertiajs/vue3";
+import { ref } from "vue";
 // import Navbar from "../LayoutComponent/Navbar.vue";
+import RightArrowIcon from '../../../Components/Icons/RightArrowIcon.vue'
+
+import {
+    Document,
+    Menu as IconMenu,
+    Location,
+    Setting,
+} from '@element-plus/icons-vue';
+
+const handleOpen = (key, keyPath) => {
+    console.log(key, keyPath);
+};
+const handleClose = (key, keyPath) => {
+    console.log(key, keyPath);
+};
+
+const subMenuOpenProduct = ref(false);
+const subMenuOpenCategory = ref(false);
+const subMenuOpenBrand = ref(false);
 
 
 </script>
@@ -28,7 +48,16 @@ import { Link } from "@inertiajs/vue3";
                     <span class="text-xl">rbane</span>
                 </span>
             </div>
+
+
+
+            <!-- navigation sidebar start here -->
+
+
             <ul class="mt-8 space-y-3 md:mt-0">
+
+
+
                 <li class="relative">
                     <Link as="button" :href="route('page.dashboardOverview')"
                         class="focus:bg-slate-600 hover:bg-slate-600 flex w-full space-x-2 rounded-md px-10 py-4 text-gray-300 focus:outline-none">
@@ -40,122 +69,136 @@ import { Link } from "@inertiajs/vue3";
                     </Link>
                 </li>
 
-                <li class="relative">
-                    <Link as="button" :href="route('page.productView')"
-                        class="focus:bg-slate-600 hover:bg-slate-600 flex w-full space-x-2 rounded-md px-10 py-4 font-semibold focus:outline-none">
-                    <span><svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24"
-                            stroke="currentColor" stroke-width="2">
-                            <path stroke-linecap="round" stroke-linejoin="round"
-                                d="M8 7h12m0 0l-4-4m4 4l-4 4m0 6H4m0 0l4 4m-4-4l4-4" />
-                        </svg> </span><span class="">Products</span>
-                    </Link>
-                    <svg class="text-slate-200 absolute -right-1 -top-1/2 z-10 hidden h-32 w-8 md:block"
-                        xmlns="http://www.w3.org/2000/svg" viewBox="399.349 57.696 100.163 402.081" width="1em"
-                        height="4em">
-                        <path fill="currentColor"
-                            d="M 499.289 57.696 C 499.289 171.989 399.349 196.304 399.349 257.333 C 399.349 322.485 499.512 354.485 499.512 458.767 C 499.512 483.155 499.289 57.696 499.289 57.696 Z" />
-                    </svg>
-                </li>
-
 
 
                 <li class="relative">
-                    <Link as="button" :href="route('page.createProduct')"
-                        class="focus:bg-slate-600 hover:bg-slate-600 flex w-full space-x-2 rounded-md px-10 py-4 text-gray-300 focus:outline-none">
-                    <span><svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24"
-                            stroke="currentColor" stroke-width="2">
-                            <path stroke-linecap="round" stroke-linejoin="round" d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8" />
-                        </svg></span><span class=" capitalize">create product</span>
-                    </Link>
-                </li>
+                    <button @click="subMenuOpenProduct = !subMenuOpenProduct" type="button"
+                        class="focus:bg-slate-600 hover:bg-slate-600 flex justify-between items-center w-full space-x-2 rounded-md px-10 py-4 text-gray-300 focus:outline-none">
 
+                        <div class="flex gap-2">
+                            <span><svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24"
+                                    stroke="currentColor" stroke-width="2">
+                                    <path stroke-linecap="round" stroke-linejoin="round"
+                                        d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8" />
+                                </svg></span><span class=" capitalize">product</span>
+                        </div>
+                        <div>
+                            <RightArrowIcon class="size-4" :class="subMenuOpenProduct === true ? 'rotate-90' : 'rotate-360'" />
+                        </div>
 
-
-                <li class="relative">
-                    <Link as="button" :href="route('page.createCategory')"
-                        class="focus:bg-slate-600 hover:bg-slate-600 flex w-full space-x-2 rounded-md px-10 py-4 text-gray-300 focus:outline-none">
-                    <span><svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24"
-                            stroke="currentColor" stroke-width="2">
-                            <path stroke-linecap="round" stroke-linejoin="round" d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8" />
-                        </svg></span><span class=" capitalize">create category</span>
-                    </Link>
-                </li>
-
-
-                <li class="relative">
-                    <Link as="button" :href="route('page.categoryView')"
-                        class="focus:bg-slate-600 hover:bg-slate-600 flex w-full space-x-2 rounded-md px-10 py-4 text-gray-300 focus:outline-none">
-                    <span><svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24"
-                            stroke="currentColor" stroke-width="2">
-                            <path stroke-linecap="round" stroke-linejoin="round" d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8" />
-                        </svg></span><span class=" capitalize">categories</span>
-                    </Link>
-                </li>
-
-                <li class="relative">
-                    <Link as="button" :href="route('page.brandView')"
-                        class="focus:bg-slate-600 hover:bg-slate-600 flex w-full space-x-2 rounded-md px-10 py-4 text-gray-300 focus:outline-none">
-                    <span><svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24"
-                            stroke="currentColor" stroke-width="2">
-                            <path stroke-linecap="round" stroke-linejoin="round" d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8" />
-                        </svg></span><span class=" capitalize">brands</span>
-                    </Link>
-                </li>
-
-                <li class="relative">
-                    <Link as="button" :href="route('page.createBrand')"
-                        class="focus:bg-slate-600 hover:bg-slate-600 flex w-full space-x-2 rounded-md px-10 py-4 text-gray-300 focus:outline-none">
-                    <span><svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24"
-                            stroke="currentColor" stroke-width="2">
-                            <path stroke-linecap="round" stroke-linejoin="round" d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8" />
-                        </svg></span><span class=" capitalize">create brand</span>
-                    </Link>
-                </li>
-                <!-- <li class="relative">
-                    <Link as="button" :href="route('page.updateBrand')"
-                        class="focus:bg-slate-600 hover:bg-slate-600 flex w-full space-x-2 rounded-md px-10 py-4 text-gray-300 focus:outline-none">
-                    <span><svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24"
-                            stroke="currentColor" stroke-width="2">
-                            <path stroke-linecap="round" stroke-linejoin="round" d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8" />
-                        </svg></span><span class=" capitalize">update brand</span>
-                    </Link>
-                </li> -->
-
-                <!-- <li class="relative">
-                    <Link as="button" :href="route('page.updateCategory')"
-                        class="focus:bg-slate-600 hover:bg-slate-600 flex w-full space-x-2 rounded-md px-10 py-4 text-gray-300 focus:outline-none">
-                    <span><svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24"
-                            stroke="currentColor" stroke-width="2">
-                            <path stroke-linecap="round" stroke-linejoin="round" d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8" />
-                        </svg></span><span class="">update category</span>
-                    </Link>
-                </li> -->
-
-
-                <li class="relative">
-                    <button
-                        class="focus:bg-slate-600 hover:bg-slate-600 flex w-full space-x-2 rounded-md px-10 py-4 text-gray-300 focus:outline-none">
-                        <span class="text-2xl"><svg xmlns="http://www.w3.org/2000/svg" aria-hidden="true" role="img"
-                                width="1em" height="1em" preserveAspectRatio="xMidYMid meet" viewBox="0 0 36 36">
-                                <path fill="currentColor"
-                                    d="M32 15h-1V9a1 1 0 0 0-1-1H6a1 1 0 0 1-1-.82v-.36A1 1 0 0 1 6 6h23.58a1 1 0 0 0 0-2H6a3 3 0 0 0-3 3a3.08 3.08 0 0 0 0 .36v20.57A4.1 4.1 0 0 0 7.13 32H30a1 1 0 0 0 1-1v-6h1a1 1 0 0 0 1-1v-8a1 1 0 0 0-1-1Zm-3 15H7.13A2.11 2.11 0 0 1 5 27.93V9.88A3.11 3.11 0 0 0 6 10h23v5h-7a5 5 0 0 0 0 10h7Zm2-7h-9a3 3 0 0 1 0-6h9Z"
-                                    class="clr-i-outline clr-i-outline-path-1" />
-                                <circle cx="23.01" cy="20" r="1.5" fill="currentColor"
-                                    class="clr-i-outline clr-i-outline-path-2" />
-                                <path fill="none" d="M0 0h36v36H0z" />
-                            </svg></span><span class="">Payments</span>
                     </button>
+
+                    <ul :class="subMenuOpenProduct ? 'block' : 'hidden'" class="bg-gray-600">
+                        <li>
+                            <Link as="button" :href="route('page.productView')"
+                                class="focus:bg-slate-600 hover:bg-slate-600 flex w-full space-x-2 rounded-md px-10 py-4 text-gray-300 focus:outline-none">
+                            <span><svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24"
+                                    stroke="currentColor" stroke-width="2">
+                                    <path stroke-linecap="round" stroke-linejoin="round"
+                                        d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8" />
+                                </svg></span><span class=" capitalize">view product</span></Link>
+                        </li>
+                        <li>
+                            <Link as="button" :href="route('page.createProduct')"
+                                class="focus:bg-slate-600 hover:bg-slate-600 flex w-full space-x-2 rounded-md px-10 py-4 text-gray-300 focus:outline-none">
+                            <span><svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24"
+                                    stroke="currentColor" stroke-width="2">
+                                    <path stroke-linecap="round" stroke-linejoin="round"
+                                        d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8" />
+                                </svg></span><span class=" capitalize">create product</span></Link>
+                        </li>
+
+                    </ul>
+
                 </li>
+
+
+
+
                 <li class="relative">
-                    <button
-                        class="focus:bg-slate-600 hover:bg-slate-600 flex w-full space-x-2 rounded-md px-10 py-4 text-gray-300 focus:outline-none">
-                        <span><svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24"
-                                stroke="currentColor" stroke-width="2">
-                                <path stroke-linecap="round" stroke-linejoin="round"
-                                    d="M3 10h18M7 15h1m4 0h1m-7 4h12a3 3 0 003-3V8a3 3 0 00-3-3H6a3 3 0 00-3 3v8a3 3 0 003 3z" />
-                            </svg></span><span class="">Cards</span>
+                    <button @click="subMenuOpenCategory = !subMenuOpenCategory" type="button"
+                        class="focus:bg-slate-600 hover:bg-slate-600 flex justify-between items-center w-full space-x-2 rounded-md px-10 py-4 text-gray-300 focus:outline-none">
+
+                        <div class="flex gap-2">
+                            <span><svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24"
+                                    stroke="currentColor" stroke-width="2">
+                                    <path stroke-linecap="round" stroke-linejoin="round"
+                                        d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8" />
+                                </svg></span><span class=" capitalize">category</span>
+                        </div>
+                        <div>
+                            <RightArrowIcon class="size-4" :class="subMenuOpenCategory === true ? 'rotate-90' : 'rotate-360'" />
+                        </div>
+
                     </button>
+
+                    <ul :class="subMenuOpenCategory ? 'block' : 'hidden'" class="bg-gray-600">
+                        <li>
+                            <Link as="button" :href="route('page.categoryView')"
+                                class="focus:bg-slate-600 hover:bg-slate-600 flex w-full space-x-2 rounded-md px-10 py-4 text-gray-300 focus:outline-none">
+                            <span><svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24"
+                                    stroke="currentColor" stroke-width="2">
+                                    <path stroke-linecap="round" stroke-linejoin="round"
+                                        d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8" />
+                                </svg></span><span class=" capitalize">view category</span></Link>
+                        </li>
+                        <li>
+                            <Link as="button" :href="route('page.createCategory')"
+                                class="focus:bg-slate-600 hover:bg-slate-600 flex w-full space-x-2 rounded-md px-10 py-4 text-gray-300 focus:outline-none">
+                            <span><svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24"
+                                    stroke="currentColor" stroke-width="2">
+                                    <path stroke-linecap="round" stroke-linejoin="round"
+                                        d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8" />
+                                </svg></span><span class=" capitalize">create category</span></Link>
+                        </li>
+
+                    </ul>
+
                 </li>
+
+                <li class="relative">
+                    <button @click="subMenuOpenBrand = !subMenuOpenBrand" type="button"
+                        class="focus:bg-slate-600 hover:bg-slate-600 flex justify-between items-center w-full space-x-2 rounded-md px-10 py-4 text-gray-300 focus:outline-none">
+
+                        <div class="flex gap-2">
+                            <span><svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24"
+                                    stroke="currentColor" stroke-width="2">
+                                    <path stroke-linecap="round" stroke-linejoin="round"
+                                        d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8" />
+                                </svg></span><span class=" capitalize">brand</span>
+                        </div>
+                        <div>
+                            <RightArrowIcon class="size-4" :class="subMenuOpenBrand === true ? 'rotate-90' : 'rotate-360'" />
+                        </div>
+
+                    </button>
+
+                    <ul :class="subMenuOpenBrand ? 'block' : 'hidden'" class="bg-gray-600">
+                        <li>
+                            <Link as="button" :href="route('page.brandView')"
+                                class="focus:bg-slate-600 hover:bg-slate-600 flex w-full space-x-2 rounded-md px-10 py-4 text-gray-300 focus:outline-none">
+                            <span><svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24"
+                                    stroke="currentColor" stroke-width="2">
+                                    <path stroke-linecap="round" stroke-linejoin="round"
+                                        d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8" />
+                                </svg></span><span class=" capitalize">view brand</span></Link>
+                        </li>
+                        <li>
+                            <Link as="button" :href="route('page.createBrand')"
+                                class="focus:bg-slate-600 hover:bg-slate-600 flex w-full space-x-2 rounded-md px-10 py-4 text-gray-300 focus:outline-none">
+                            <span><svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24"
+                                    stroke="currentColor" stroke-width="2">
+                                    <path stroke-linecap="round" stroke-linejoin="round"
+                                        d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8" />
+                                </svg></span><span class=" capitalize">create brand</span></Link>
+                        </li>
+
+                    </ul>
+
+                </li>
+                
+                
+               
                 <li class="relative">
                     <button
                         class="focus:bg-slate-600 hover:bg-slate-600 flex w-full space-x-2 rounded-md px-10 py-4 text-gray-300 focus:outline-none">
@@ -168,6 +211,13 @@ import { Link } from "@inertiajs/vue3";
                     </button>
                 </li>
             </ul>
+            <!-- navigation sidebar end here -->
+
+
+
+
+
+
 
             <div class="my-6 mt-auto ml-10 flex cursor-pointer">
                 <div>

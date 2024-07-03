@@ -57,7 +57,7 @@ class CategoryController extends Controller
                     $query->where('isSliderForCarousel', false);
                 }
             })
-            ->orderByDesc('id')->paginate(5);
+            ->orderByDesc('id')->paginate(5)->withQueryString();
         return Inertia::render('Admin/Category/CategoryView', [
             'categories' => CategoryResource::collection($categories),
         ]);

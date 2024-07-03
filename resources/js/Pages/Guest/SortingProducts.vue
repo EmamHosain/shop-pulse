@@ -4,11 +4,8 @@ import GuestLayout from '@/Layouts/GuestLayout.vue';
 import BreadcrumbSection from "@/Components/MyComponent/BreadcrumbSection.vue";
 // import SortProducts from '../../Components/MyComponent/SortProducts.vue'
 import Category from "@/Components/MyComponent/Category.vue";
-
-
 // start here 
-import { computed, watch, ref } from 'vue';
-
+import { computed, watch, ref, onMounted, watchEffect } from 'vue';
 import SingleProduct from '@/Components/MyComponent/SingleProduct.vue';
 import PlusIcon from '@/Components/Icons/PlusIcon.vue';
 import MinusIcon from '@/Components/Icons/MinusIcon.vue';
@@ -16,10 +13,6 @@ import DownArrowIcon from '@/Components/Icons/DownArrowIcon.vue';
 import FunnelIcon from '@/Components/Icons/FunnelIcon.vue';
 import Squares2X2Icon from '@/Components/Icons/Squares2X2Icon.vue';
 import XMarkIcon from '@/Components/Icons/XMarkIcon.vue';
-
-
-
-
 import {
     Dialog,
     DialogPanel,
@@ -33,73 +26,23 @@ import {
     TransitionChild,
     TransitionRoot,
 } from '@headlessui/vue'
+import useProduct from '@/Composables/useProduct';
 
 
-
-
-
-
-
-
-
-
-
-const subCategories = [
-    { name: 'Totes', href: '#' },
-    { name: 'Backpacks', href: '#' },
-    { name: 'Travel Bags', href: '#' },
-    { name: 'Hip Bags', href: '#' },
-    { name: 'Laptop Sleeves', href: '#' },
-]
-const filters = [
-    {
-        id: 'color',
-        name: 'Color',
-        options: [
-            { value: 'white', label: 'White', checked: false },
-            { value: 'beige', label: 'Beige', checked: false },
-            { value: 'blue', label: 'Blue', checked: true },
-            { value: 'brown', label: 'Brown', checked: false },
-            { value: 'green', label: 'Green', checked: false },
-            { value: 'purple', label: 'Purple', checked: false },
-        ],
-    },
-    {
-        id: 'category',
-        name: 'Category',
-        options: [
-            { value: 'new-arrivals', label: 'New Arrivals', checked: false },
-            { value: 'sale', label: 'Sale', checked: false },
-            { value: 'travel', label: 'Travel', checked: true },
-            { value: 'organization', label: 'Organization', checked: false },
-            { value: 'accessories', label: 'Accessories', checked: false },
-        ],
-    },
-    {
-        id: 'size',
-        name: 'Size',
-        options: [
-            { value: '2l', label: '2L', checked: false },
-            { value: '6l', label: '6L', checked: false },
-            { value: '12l', label: '12L', checked: false },
-            { value: '18l', label: '18L', checked: false },
-            { value: '20l', label: '20L', checked: false },
-            { value: '40l', label: '40L', checked: true },
-        ],
-    },
-]
+const props = defineProps({
+    selectedCategorySlug: String
+})
+const currentCategory = computed(() => props.selectedCategorySlug)
+// const {getProductsByCategory} = useProduct();
 
 const mobileFiltersOpen = ref(false)
-
-
-
-
 const products = computed(() => usePage().props.products.data);
 const categories = usePage().props.categories.data;
 const brands = usePage().props.brands.data;
 
 
-// const selectedCategory = ref('')
+
+
 const selectedBrand = ref('');
 const getProductsByCategory = (slug) => {
     selectedBrand.value = '';
@@ -109,7 +52,8 @@ const getProductsByCategory = (slug) => {
         replace: true,
         onError: (errors) => {
             console.log('sort category errors', errors)
-        }
+        },
+
     });
 }
 
@@ -179,6 +123,8 @@ watch(selectedBrand, (newValue) => {
 
 })
 
+
+
 </script>
 
 <template>
@@ -202,9 +148,9 @@ watch(selectedBrand, (newValue) => {
             <!-- <SortProducts /> -->
 
             <!-- start here -->
-            <div class="bg-white">
+            <div class="bg-white" id="sortingProduct">
                 <div>
-                    <!-- Mobile filter dialog -->
+                    <!-- Mobile filter dialog start-->
                     <TransitionRoot as="template" :show="mobileFiltersOpen">
                         <Dialog class="relative z-40 lg:hidden" @close="mobileFiltersOpen = false">
                             <TransitionChild as="template" enter="transition-opacity ease-linear duration-300"
@@ -236,69 +182,139 @@ watch(selectedBrand, (newValue) => {
                                         </div>
 
                                         <!-- Filters -->
-                                        <form class="mt-4 border-t border-gray-200">
-                                            <h3 class="">Categories</h3>
-                                            <!-- <ul role="list" class="px-2 py-3 font-medium text-gray-900">
-                                        <li v-for="category in categories" :key="category.id">
-                                            <Link :href="route('page.productsByCategory', category.slug)"
-                                                class="block px-2 py-3">{{ category.cat_name }}</Link>
-                                        </li>
-                                    </ul> -->
+                                        <form class="mt-4 border-t border-gray-200 px-4">
 
-                                            <Disclosure as="div" v-for="section in filters" :key="section.id"
-                                                class="border-t border-gray-200 px-4 py-6" v-slot="{ open }">
-                                                <h3 class="-mx-2 -my-3 flow-root">
+
+
+                                            <!-- category start here -->
+                                            <Disclosure as="div" class="border-b border-gray-200 py-6" v-slot="{ open }">
+                                                <h3 class="-my-3 flow-root border-b-2 mb-0.5">
                                                     <DisclosureButton
-                                                        class="flex w-full items-center justify-between bg-white px-2 py-3 text-gray-400 hover:text-gray-500">
-                                                        <span class="font-medium text-gray-900">{{ section.name }}</span>
+                                                        class="flex w-full items-center justify-between bg-white text-sm text-gray-400 hover:text-gray-500">
+
+                                                        <p
+                                                            class="font-medium text-black border-b-2 border-black pb-2 text-md capitalize">
+                                                            Category</p>
+
+
                                                         <span class="ml-6 flex items-center">
-
-
-
-                                                            <PlusIcon v-if="!open" class="h-5 w-5" aria-hidden="true" />
-                                                            <MinusIcon v-else class="h-5 w-5" aria-hidden="true" />
-
-
-
-
-
-
+                                                            <PlusIcon v-if="!open" class="h-5 w-5 text-black"
+                                                                aria-hidden="true" />
+                                                            <MinusIcon v-else class="h-5 w-5 text-black"
+                                                                aria-hidden="true" />
                                                         </span>
+
                                                     </DisclosureButton>
                                                 </h3>
-
-
-
-
-                                                <DisclosurePanel class="pt-6">
-                                                    <div class="space-y-6">
-                                                        <div v-for="(option, optionIdx) in section.options"
-                                                            :key="option.value" class="flex items-center">
-                                                            <input :id="`filter-mobile-${section.id}-${optionIdx}`"
-                                                                :name="`${section.id}[]`" :value="option.value"
-                                                                type="checkbox" :checked="option.checked"
-                                                                class="h-4 w-4 rounded border-gray-300 text-indigo-600 focus:ring-indigo-500" />
-                                                            <label :for="`filter-mobile-${section.id}-${optionIdx}`"
-                                                                class="ml-3 min-w-0 flex-1 text-gray-500">{{ option.label
-                                                                }}</label>
+                                                <DisclosurePanel class="pt-6 category-container">
+                                                    <div class="space-y-4">
+                                                        <div class="flex flex-col gap-3">
+                                                            <p @click="getProductsByCategory(category.slug)"
+                                                                v-for="category in categories" :key="category.id"
+                                                                class=" cursor-pointer text-left hover:to-blue-500 category-name" :class="currentCategory===category.slug ? 'text-blue-400' : ''">
+                                                                {{ category.cat_name }}
+                                                            </p>
                                                         </div>
                                                     </div>
                                                 </DisclosurePanel>
-
-
-
-
                                             </Disclosure>
+                                            <!-- category end here -->
+
+
+
+                                            <!-- sort by price start here -->
+                                            <Disclosure as="div" class="border-b border-gray-200 py-6" v-slot="{ open }">
+                                                <h3 class="-my-3 flow-root border-b-2 mb-0.5">
+                                                    <DisclosureButton
+                                                        class="flex w-full items-center justify-between bg-white text-sm text-gray-400 hover:text-gray-500">
+
+                                                        <p
+                                                            class="font-medium text-black border-b-2 border-black pb-2 text-md capitalize">
+                                                            sort by price</p>
+
+
+                                                        <span class="ml-6 flex items-center">
+                                                            <PlusIcon v-if="!open" class="h-5 w-5 text-black"
+                                                                aria-hidden="true" />
+                                                            <MinusIcon v-else class="h-5 w-5 text-black"
+                                                                aria-hidden="true" />
+                                                        </span>
+
+                                                    </DisclosureButton>
+                                                </h3>
+                                                <DisclosurePanel class="pt-6">
+                                                    <div class="space-y-4">
+                                                        <div class="slider-demo-block">
+                                                            <el-slider v-model="sortingPrice" range :min="pricetStart"
+                                                                :max="priceEnd" />
+                                                        </div>
+                                                        <p class="">Range</p>
+                                                        <p class=" font-bold"> {{ sortingPrice[0] }} - {{ sortingPrice[1] }}
+                                                        </p>
+                                                        <button @click="sortByPrice"
+                                                            class="px-4 py-1 bg-blue-400 text-white"
+                                                            type="button">Filter</button>
+
+                                                    </div>
+                                                </DisclosurePanel>
+                                            </Disclosure>
+                                            <!--sort by price end here -->
+
+                                            <!-- brands start here -->
+                                            <Disclosure as="div" class="border-b border-gray-200 py-6" v-slot="{ open }">
+                                                <h3 class="-my-3 flow-root border-b-2 mb-0.5">
+                                                    <DisclosureButton
+                                                        class="flex w-full items-center justify-between bg-white text-sm text-gray-400 hover:text-gray-500">
+
+                                                        <p
+                                                            class="font-medium text-black border-b-2 border-black pb-2 text-md">
+                                                            Brand
+                                                        </p>
+
+
+                                                        <span class="ml-6 flex items-center">
+                                                            <PlusIcon v-if="!open" class="h-5 w-5 text-black"
+                                                                aria-hidden="true" />
+                                                            <MinusIcon v-else class="h-5 w-5 text-black"
+                                                                aria-hidden="true" />
+                                                        </span>
+
+                                                    </DisclosureButton>
+                                                </h3>
+
+                                                <DisclosurePanel class="pt-6">
+                                                    <div class="space-y-4">
+                                                        <div v-for="brand in brands" :key="brand.id"
+                                                            class="flex items-center">
+                                                            <input :id="`filter-${brand.id}`" v-model="selectedBrand"
+                                                                :value="brand.slug" type="radio" name="brand"
+                                                                class="h-4 w-4 rounded border-gray-300 text-indigo-600 focus:ring-indigo-500" />
+                                                            <label :for="`filter-${brand.id}`"
+                                                                class="ml-3 text-sm text-gray-600">{{
+                                                                    brand.brand_name }}</label>
+                                                        </div>
+                                                    </div>
+                                                </DisclosurePanel>
+                                            </Disclosure>
+                                            <!-- brands end here -->
+
+
+
+
                                         </form>
+
                                     </DialogPanel>
                                 </TransitionChild>
                             </div>
                         </Dialog>
                     </TransitionRoot>
+                    <!-- Mobile filter dialog end-->
+
+
 
                     <main class="container px-4 md:px-0">
-                        <div class="flex items-baseline justify-between border-b border-gray-200 pb-6 pt-24">
-                            <h1 class="text-4xl font-bold tracking-tight text-gray-900">New Arrivals</h1>
+                        <div class="flex items-center justify-between border-b border-gray-200 pb-6 pt-24">
+                            <h1 class="text-xl  md:text-4xl font-bold tracking-tight text-gray-900">New Arrivals</h1>
 
                             <div class="flex gap-6">
                                 <div class="flex items-center">
@@ -335,18 +351,9 @@ watch(selectedBrand, (newValue) => {
                                     </Menu>
 
 
-
-                                    <button type="button"
-                                        class="-m-2 ml-4 p-2 text-gray-400 hover:text-gray-500 sm:ml-6 lg:hidden"
-                                        @click="mobileFiltersOpen = true">
-                                        <span class="sr-only">Filters</span>
-                                        <FunnelIcon class="h-5 w-5" aria-hidden="true" />
-                                    </button>
-
-
-
                                 </div>
                                 <div class="flex items-center">
+
                                     <Menu as="div" class="relative inline-block text-left">
                                         <div>
                                             <MenuButton
@@ -396,6 +403,7 @@ watch(selectedBrand, (newValue) => {
 
 
 
+                        <!--for large sereen start-->
                         <section aria-labelledby="products-heading" class="pb-24 pt-6">
                             <h2 id="products-heading" class="sr-only">Products</h2>
 
@@ -403,15 +411,6 @@ watch(selectedBrand, (newValue) => {
                                 <!-- Filters -->
                                 <form class="hidden lg:block">
                                     <h3 class="sr-only">Categories</h3>
-                                    <!-- <ul role="list"
-                                class="space-y-4 border-b border-gray-200 pb-6 text-sm font-medium text-gray-900">
-                                <li v-for="category in categories" :key="category.id">
-                                    <a href="#">{{ category.cat_name }}</a>
-                                </li>
-                            </ul> -->
-
-
-
 
                                     <!-- category start here -->
                                     <Disclosure as="div" class="border-b border-gray-200 py-6" v-slot="{ open }">
@@ -436,7 +435,7 @@ watch(selectedBrand, (newValue) => {
                                                 <div class="flex flex-col gap-3">
                                                     <p @click="getProductsByCategory(category.slug)"
                                                         v-for="category in categories" :key="category.id"
-                                                        class=" cursor-pointer text-left hover:to-blue-500 category-name">
+                                                        class=" cursor-pointer text-left hover:text-blue-400 category-name" :class="currentCategory===category.slug ? 'text-blue-400' : ''">
                                                         {{ category.cat_name }}
                                                     </p>
                                                 </div>
@@ -550,14 +549,14 @@ watch(selectedBrand, (newValue) => {
                                 </div>
                             </div>
                         </section>
+                        <!--for large sereen start-->
+
                     </main>
                 </div>
             </div>
-
-
-
-
             <!-- end here -->
+
+
 
 
         </div>
@@ -575,22 +574,6 @@ watch(selectedBrand, (newValue) => {
 .slider-demo-block .el-slider {
     margin-top: 0;
     margin-left: 12px;
-}
-
-
-
-
-
-
-
-
-
-
-
-
-
-.category-name:hover {
-    color: rgba(0, 0, 255, 0.746);
 }
 
 .border-b {

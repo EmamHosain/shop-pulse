@@ -70,7 +70,7 @@ class ProductController extends Controller
                     $query->where('slug', $brand);
                 });
             })
-            ->orderByDesc('id')->paginate(10);
+            ->orderByDesc('id')->paginate(10)->withQueryString();
 
 
 

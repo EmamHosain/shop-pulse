@@ -1,16 +1,12 @@
 <script setup>
-import { usePage,router } from '@inertiajs/vue3'
+import { usePage, router } from '@inertiajs/vue3'
 import { Carousel, Navigation, Slide } from 'vue3-carousel'
-
 import 'vue3-carousel/dist/carousel.css'
-
 
 const settings = {
     itemsToShow: 1,
     snapAlign: 'center',
 }
-
-
 const breakpoints = {
     300: {
         itemsToShow: 3,
@@ -50,7 +46,7 @@ const getProductsByBrand = (slug) => {
             :pauseAutoplayOnHover="true" :breakpoints="breakpoints">
 
             <Slide v-for="brand in brands" :key="brand.id">
-                <div @click="getProductsByBrand(brand.slug)" class="carousel__item cursor-pointer hover:text-blue-400">
+                <div class="carousel__item cursor-pointer hover:text-blue-400">
                     <div class="brand">
                         <img src="../../../assets/images-1/about_img.jpg" alt="Brand 1"
                             class="max-h-16 max-w-xs mx-auto hover:scale-110 transition-transform duration-300 mb-1" />

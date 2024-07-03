@@ -1,7 +1,7 @@
 <script setup>
 import AdminLayout from '@/Layouts/AdminLayout.vue';
 import { ref, reactive, computed } from 'vue';
-import { Head, router, useForm, usePage } from '@inertiajs/vue3';
+import { Head, router, useForm, usePage,Link } from '@inertiajs/vue3';
 import { Delete, Download, Plus, ZoomIn } from '@element-plus/icons-vue'
 import ErrorMessage from '../../../Components/AdminComponent/LayoutComponent/ErrorMessage.vue'
 
@@ -97,11 +97,17 @@ const handlePictureCardPreview = (file) => {
     <Head title="create product" />
     <admin-layout>
         <div class="w-full shadow-md bg-white">
-           
+
             <form @submit.prevent="submit" class="max-w-7xl mx-auto p-4">
                 <div class=" space-y-4">
                     <div class="border-b border-gray-900/10 pb-12">
-                        <h2 class="text-base font-semibold leading-7 text-gray-900">Create Product</h2>
+                        <div class="flex justify-between">
+                            <h2 class="text-base font-semibold leading-7 text-gray-900">Create Product</h2>
+                            <Link as="button" class="text-base font-semibold leading-7  text-blue-500 underline "
+                                :href="route('page.productView')">
+                            View Products
+                            </Link>
+                        </div>
                         <div class="mt-10 grid grid-cols-1 gap-x-6 gap-y-8 sm:grid-cols-6">
 
                             <div class="col-span-full flex md:flex-row sm:flex-col gap-3">

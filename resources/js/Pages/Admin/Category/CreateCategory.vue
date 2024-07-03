@@ -39,8 +39,8 @@ const submit = () => {
             status: form.status,
             category_logo: form.categoryLogo,
             category_slider: form.categorySlider,
-            carousel : form.carousel,
-          
+            carousel: form.carousel,
+
         }, {
         preserveScroll: true,
         preserveState: true,
@@ -80,7 +80,14 @@ const categorySliderChange = (event) => {
             <form @submit.prevent="submit" class="max-w-7xl mx-auto p-4">
                 <div class=" space-y-4">
                     <div class="border-b border-gray-900/10 pb-12">
-                        <h2 class="text-base font-semibold leading-7 text-gray-900">Create category</h2>
+                        <div class="flex justify-between">
+                            <h2 class="text-base font-semibold leading-7 text-gray-900">Create category</h2>
+                            <Link as="button" class="text-base font-semibold leading-7  text-blue-500 underline "
+                                :href="route('page.categoryView')">
+                            View Categories
+                            </Link>
+                        </div>
+                        
                         <div class="mt-10 grid grid-cols-1 gap-x-6 gap-y-8 sm:grid-cols-6">
 
                             <div class="col-span-full flex md:flex-row sm:flex-col gap-3">

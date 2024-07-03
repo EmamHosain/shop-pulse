@@ -1,47 +1,13 @@
 <script setup>
 import { computed } from 'vue';
-import { router, usePage } from '@inertiajs/vue3';
+import { router, usePage, Link } from '@inertiajs/vue3';
 import WishListIcon from '../Icons/WishListIcon.vue';
+import useProduct from '@/Composables/useProduct';
 
 const props = defineProps({
     productItems: Array,
 })
-
-
-// request sending using query perameter 
-const getProductDetails = (product) => {
-    router.get(route('page.productDetails'), { product },)
-}
-
-
-
-const addToCart = (id) => {
-    router.post(route('checkout.store'), { productId: id }, {
-        preserveScroll: true,
-        replace: true,
-        preserveState: true,
-        onError: (errors) => {
-            console.log('errors', errors)
-        }
-    })
-}
-
-// const products = computed(() => usePage().props.wishlist.data.products);
-// console.log('products',products.value);
-const addToWishList = (id) => {
-    router.post(route('wishlist.store'), {
-        productId: id
-    }, {
-        preserveScroll: true,
-        preserveState: true,
-        replace: true,
-        onSuccess: () => {
-            console.log('add to wishlist successfully')
-            // console.log('products', products.value)
-        }
-    })
-}
-
+const { addToCart, addToWishList } = useProduct();
 </script>
 <template>
     <article v-for="product, index in productItems" :key="index"
@@ -65,9 +31,10 @@ const addToWishList = (id) => {
                 <!-- price -->
                 <del v-if="product.discount_price" class="text-xs text-gray-400"> {{ product.price }} </del>
             </div>
-            <h3 @click.prevent="getProductDetails(product.slug)" class="mb-2 text-sm text-gray-400 cursor-pointer">{{
-                product.title
-            }} {{ product.id }}</h3>
+            <Link as="button" :href="`${route('page.productDetails')}?product=${product.slug}`"
+                class="mb-2 text-sm text-gray-400 cursor-pointer text-left">{{
+                    product.title
+                }} {{ product.id }}</Link>
         </div>
 
         <div class="mx-auto mb-2  h-10 w-10/12 flex items-start">
