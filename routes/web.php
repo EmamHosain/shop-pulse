@@ -24,10 +24,8 @@ Route::get('/', [HomeController::class, 'index'])->name('page.home');
 
 // products start
 Route::get('/product-details', [ProductController::class, 'getProductDetails'])->name('page.productDetails');
-
 // sorting products
 Route::get('/products-by-category', [ProductController::class, 'getProductsByCategory'])->name('page.productsByCategory');
-
 Route::get('/products-by-brand', [ProductController::class, 'getProductsByBrand'])->name('page.productsByBrand');
 // products end
 
@@ -58,9 +56,15 @@ Route::delete('/checkout/delete/{id}', [CartItemController::class, 'delete'])->n
 
 
 Route::middleware(['auth:sanctum', config('jetstream.auth_session'), 'verified'])->group(function () {
-    Route::get('/dashboard', [AdminController::class, 'index'])->name('dashboard');
-    Route::get('/admin/dashboard-overview', [AdminController::class, 'dashboardOverview'])->name('page.dashboardOverview');
 
+    // admin personal route start here
+    Route::get('/dashboard', [AdminController::class, 'index'])->name('dashboard');
+    Route::get('/admin/profile', [AdminController::class, 'updateProfile'])->name('page.updateAdminProfile');
+
+    // admin personal route end here
+
+
+    Route::get('/admin/dashboard-overview', [AdminController::class, 'dashboardOverview'])->name('page.dashboardOverview');
     // admin produc route start here
     Route::get('/admin/products', [App\Http\Controllers\Admin\ProductController::class, 'productView'])->name('page.productView');
     Route::get('/admin/create-product', [App\Http\Controllers\Admin\ProductController::class, 'createProduct'])->name('page.createProduct');
@@ -99,11 +103,6 @@ Route::middleware(['auth:sanctum', config('jetstream.auth_session'), 'verified']
     // category slider route start here
     Route::delete('/admin/category-slider-remove/{id}', [App\Http\Controllers\Admin\CategorySliderController::class, 'categorySliderRemove'])->name('category.categorySliderRemove');
     // category slider route end here
-
-
-
-
     // iamge route 
     Route::delete('/admin/remove-product-image/{productId}/{imageId}', [App\Http\Controllers\Admin\ProductImageController::class, 'removeProductImage'])->name('product.image.delete');
-    Route::get('/admin-profile', [AdminController::class, 'adminProfile']);
 });

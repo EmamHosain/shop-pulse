@@ -1,23 +1,18 @@
 <script setup>
 import { ref, computed } from 'vue';
-
-
-
 import PlusIcon from '../Icons/PlusIcon.vue';
 import MinusIcon from '../Icons/MinusIcon.vue';
-
 import WishListIcon from '../Icons/WishListIcon.vue';
 import CartIcon from '../Icons/CartIcon.vue';
 import Teliphone from '../Icons/Teliphone.vue';
-
 import SingleProduct from './SingleProduct.vue';
 import { router, usePage } from '@inertiajs/vue3';
-
 import Category from './Category.vue';
 import BreadcrumbSection from './BreadcrumbSection.vue';
+import useProduct from '@/Composables/useProduct';
 
 
-
+const { addToCart, addToWishList, productBuyNow } = useProduct();
 const product = computed(() => usePage().props.product);
 const relatedProducts = computed(() => usePage().props.related_products);
 // console.log('products',relatedProducts);
@@ -106,6 +101,7 @@ const decrementQuantity = () => {
 
 
 
+                <!-- product details section start here -->
 
                 <div class="lg:col-span-2">
                     <!-- heading -->
@@ -168,17 +164,17 @@ const decrementQuantity = () => {
 
                     <!-- action button start here -->
                     <div class="flex gap-4 mb-4">
-                        <button type="button"
+                        <button @click="productBuyNow(product.id)" type="button"
                             class=" mt-8 px-6 py-3 bg-orange-400 hover:bg-orange-500 text-white text-sm font-semibold rounded-md">Buy
                             Now</button>
 
-                        <button type="button"
+                        <button @click="addToWishList(product.id)" type="button"
                             class=" mt-8 px-6 py-3 bg-orange-400 hover:bg-orange-500 text-white text-sm font-semibold rounded-md">
                             <WishListIcon :size="20" />
                             <!-- <span> Add to wishlist</span> -->
                         </button>
 
-                        <button type="button"
+                        <button @click="addToCart(product.id)" type="button"
                             class=" mt-8 px-6 py-3 flex justify-center items-center gap-2 bg-orange-400 hover:bg-orange-500 text-white text-sm font-semibold rounded-md">
                             <CartIcon :size="18" />
                             <span> Add to cart</span>
@@ -236,51 +232,26 @@ const decrementQuantity = () => {
 
 
                 </div>
-
-
-
-
+                <!-- product details section end here -->
             </div>
 
 
 
 
             <!-- cart long description start here -->
+            <div class="mt-20 mb-10">
+                <el-tabs type="border-card">
+                    <el-tab-pane label="Long description">{{ product.long_description }}</el-tab-pane>
+                    <el-tab-pane label="How to buy">Lorem ipsum dolor sit amet consectetur adipisicing elit. Sit explicabo
+                        asperiores repellendus sunt illo voluptatum. Rerum nesciunt beatae voluptate vel placeat, ea magnam
+                        pariatur blanditiis! Placeat, nam qui! Minima animi possimus id ipsam molestiae nesciunt dolorem
+                        dicta perferendis fugit praesentium?</el-tab-pane>
+                    <el-tab-pane label="Return policy">Lorem ipsum dolor sit amet consectetur, adipisicing elit. Voluptatum
+                        consequatur quaerat ex iusto deserunt rerum sunt ullam, ratione illum! Labore, libero tempore itaque
+                        voluptatem quisquam nisi hic amet ullam animi.</el-tab-pane>
 
-
-            <!-- <div class="mt-4">
-
-                <TabView v-model:activeIndex="active">
-
-                    <TabPanel header="Description">
-                        <p class="m-0">
-                            {{ product.long_description }}
-                        </p>
-                    </TabPanel>
-                    <TabPanel header="How to order">
-                        <p class="m-0">
-                            Sed ut perspiciatis unde omnis iste natus error sit voluptatem accusantium doloremque
-                            laudantium, totam rem aperiam, eaque ipsa quae ab illo inventore veritatis et quasi
-                            architecto beatae vitae dicta sunt explicabo. Nemo enim
-                            ipsam voluptatem quia voluptas sit aspernatur aut odit aut fugit, sed quia consequuntur
-                            magni dolores eos qui ratione voluptatem sequi nesciunt. Consectetur, adipisci velit, sed
-                            quia non numquam eius modi.
-                        </p>
-                    </TabPanel>
-                    <TabPanel header="Order Policy">
-                        <p class="m-0">
-                            At vero eos et accusamus et iusto odio dignissimos ducimus qui blanditiis praesentium
-                            voluptatum deleniti atque corrupti quos dolores et quas molestias excepturi sint occaecati
-                            cupiditate non provident, similique sunt in culpa qui
-                            officia deserunt mollitia animi, id est laborum et dolorum fuga. Et harum quidem rerum
-                            facilis est et expedita distinctio. Nam libero tempore, cum soluta nobis est eligendi optio
-                            cumque nihil impedit quo minus.
-                        </p>
-                    </TabPanel>
-                </TabView>
-
-
-            </div> -->
+                </el-tabs>
+            </div>
             <!-- cart long description end here-->
 
 

@@ -18,9 +18,11 @@ class HomeController extends Controller
     public function index()
     {
 
-        $products = Product::where('published', true)->get();
+        $products = Product::where('published', true)->orderByDesc('id')->get();
+        $newProducts = Product::where('published', true)->orderByDesc('id')->take(20)->get();
         return Inertia::render('Guest/Home', [
-            'products' => $products
+            'products' => $products,
+            'newArrivalProducts' => $newProducts
         ]);
     }
 

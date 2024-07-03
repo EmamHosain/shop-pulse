@@ -17,7 +17,7 @@ class AdminController extends Controller
     {
         return Inertia::render('Admin/DashboardOverview');
     }
-    public function adminProfile(){
-        return Inertia::render('Admin/Profile');
+    public function updateProfile(){
+        return Inertia::render('Admin/Profile/UpdateProfile');
     }
 }

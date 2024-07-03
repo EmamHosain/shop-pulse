@@ -95,7 +95,8 @@ class ProductController extends Controller
         return Inertia::render('Guest/SortingProducts', [
             'products' => $products,
             'brands' => BrandResource::collection($brands),
-            'selectedCategorySlug' => $category->slug
+            'selectedCategorySlug' => $category->slug,
+            
         ]);
     }
 
