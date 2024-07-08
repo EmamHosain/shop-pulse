@@ -16,16 +16,12 @@ class ProductUnitSeeder extends Seeder
     public function run(): void
     {
 
-        $units = ['kg', 'gm', 'pc'];
+        $units = ['kg', 'gm', 'pcs'];
         $faker = Faker::create();
-
         foreach ($units as $item) {
             $productUnit = ProductUnit::create([
                 'unit_name' => $item,
-                'unit_value' => $faker->numberBetween(1, 5)
             ]);
-            // $products = Product::pluck('id')->all();
-            // $productUnit->products()->attach($faker->randomElement($products));
         }
     }
 }

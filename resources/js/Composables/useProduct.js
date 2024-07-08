@@ -1,11 +1,16 @@
 import { router } from "@inertiajs/vue3"
 export default function useProduct() {
 
-    const addToCart = (id) => {
+    const addToCart = (id, goToCartPage = null) => {
         router.post(route('checkout.store'), { productId: id }, {
             preserveScroll: true,
             replace: true,
             preserveState: true,
+            onSuccess: () => {
+                if (goToCartPage !== null) {
+                    router.get(route('page.checkout'), '',)
+                }
+            },
             onError: (errors) => {
                 console.log('errors', errors)
             }
@@ -26,13 +31,12 @@ export default function useProduct() {
     }
 
     const productBuyNow = (id) => {
-        addToCart(id);
-        router.get(route('page.checkout'), '',)
+        addToCart(id, true);
     }
 
 
 
-    
+
     const getProductsByCategory = (slug) => {
 
         const scrollToElement = (id) => {

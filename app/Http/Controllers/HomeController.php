@@ -20,9 +20,11 @@ class HomeController extends Controller
 
         $products = Product::where('published', true)->orderByDesc('id')->get();
         $newProducts = Product::where('published', true)->orderByDesc('id')->take(20)->get();
+        $sliders = Category::where('isSliderForCarousel', true)->get();
         return Inertia::render('Guest/Home', [
             'products' => $products,
-            'newArrivalProducts' => $newProducts
+            'newArrivalProducts' => $newProducts,
+            'catSliders' => $sliders
         ]);
     }
 

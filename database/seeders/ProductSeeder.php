@@ -43,8 +43,7 @@ class ProductSeeder extends Seeder
                 'short_description' => $faker->sentence(10),
                 'long_description' => $faker->paragraphs(3, true),
                 'published' => $faker->boolean,
-                'inStock' => $faker->boolean,
-                'stock_count' => $faker->numberBetween(1, 100),
+                'unit_quantity' => $faker->numberBetween(1, 5),
                 'price' => $price,
                 'discount_percentage' => $discount_percentage,
                 'discount_price' => $discount_price,
@@ -53,6 +52,7 @@ class ProductSeeder extends Seeder
 
             $category = Category::pluck('id')->all();
             $product->categories()->attach($faker->randomElement($category));
+
 
             $units = ProductUnit::pluck('id')->all();
             $product->productUnits()->attach($faker->randomElement($units));

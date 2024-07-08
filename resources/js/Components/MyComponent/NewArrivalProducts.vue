@@ -67,10 +67,11 @@ const breakpoints = {
                             <div class="my-4 mx-auto flex w-10/12 flex-col items-start justify-between">
                                 <div class="mb-2 flex">
                                     <!-- discount price -->
-                                    <p class="mr-3 text-sm font-semibold">{{ product.discount_price ?? product.price }}</p>
+                                    <p class="mr-3 text-sm font-semibold">{{ product.discount_price == 0 ? product.price :
+                                        product.discount_price }} Tk</p>
 
                                     <!-- price -->
-                                    <del v-if="product.discount_price" class="text-xs text-gray-400"> {{ product.price }}
+                                    <del v-if="product.discount_price" class="text-xs text-gray-400"> {{ product.price }} Tk
                                     </del>
                                 </div>
                                 <Link as="button" :href="`${route('page.productDetails')}?product=${product.slug}`"

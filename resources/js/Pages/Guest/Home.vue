@@ -10,11 +10,8 @@ import GuestLayout from "@/Layouts/GuestLayout.vue";
 import BrandList from "@/Components/MyComponent/BrandList.vue";
 
 
-const props = defineProps({ newArrivalProducts: Array });
-
+const props = defineProps({ newArrivalProducts: Array,catSliders:Array });
 const newProducts = computed(() => props.newArrivalProducts)
-
-
 
 </script>
 <template>
@@ -25,7 +22,7 @@ const newProducts = computed(() => props.newArrivalProducts)
             <main>
                 <CategoryCarousel />
                 <br>
-                <HeroBanner />
+                <HeroBanner :cat-sliders="catSliders" />
                 <Features />
                 <NewArrivalProducts :new-products="newProducts" />
                 <div class="container pb-16">

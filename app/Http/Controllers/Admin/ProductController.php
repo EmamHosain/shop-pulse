@@ -6,6 +6,7 @@ namespace App\Http\Controllers\Admin;
 use Redirect;
 use Inertia\Inertia;
 use App\Models\Product;
+use App\Models\ProductUnit;
 use Illuminate\Support\Str;
 use App\Models\ProductImage;
 use Illuminate\Http\Request;
@@ -13,6 +14,7 @@ use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Facades\Validator;
 
 class ProductController extends Controller
 {
@@ -84,7 +86,10 @@ class ProductController extends Controller
 
     public function createProduct()
     {
-        return Inertia::render('Admin/Product/CreateProduct');
+        $unitNames = ProductUnit::get();
+        return Inertia::render('Admin/Product/CreateProduct', [
+            'productUnitNames' => $unitNames
+        ]);
     }
 
 
@@ -92,66 +97,82 @@ class ProductController extends Controller
     public function storeProduct(Request $request)
     {
 
-        $validatedData = $request->validate([
-            'title' => 'required|unique:products,title,except,id|string|max:255',
+
+
+        $validator = Validator::make($request->all(), [
+            'title' => 'required|unique:products,title,NULL,id|string|max:255',
             'short_description' => 'required|string',
             'long_description' => 'required|string',
             'price' => 'required|numeric',
             'quantity' => 'required|integer',
-            'brand' => 'required|string|max:255',
+            'brand' => 'nullable',
             'status' => 'required|string|max:50',
             'categories' => 'required|array|exists:categories,id',
-
             'images' => 'required',
             'images.*' => 'required|mimes:jpeg,png,jpg',
-            'discount_percentage' => 'required|numeric'
+            'discount_percentage' => 'nullable|numeric',
+
+            'unit_name' => $request->input('unit_quantity') ? 'required' : 'nullable',
+            'unit_quantity' => $request->input('unit_name') ? 'required' : 'nullable',
+
         ]);
+
+        // Perform initial validation
+        $validator->validate();
+        $validatedData = $validator->validated();
+
+        // Check for validation errors after adding custom ones
+        if ($validator->fails()) {
+            return Redirect::back()->withErrors($validator)->withInput();
+        }
+
         DB::beginTransaction();
         try {
             // Create a new product
             $product = Product::create([
                 'title' => $validatedData['title'],
                 'slug' => Str::slug($validatedData['title']),
-                'stock_count' => $validatedData['quantity'],
-                'inStock' => (int) $validatedData['quantity'] > 0 ? true : false,
+                'quantity' => $validatedData['quantity'],
+                'unit_quantity' => $validatedData['unit_quantity'],
                 'short_description' => $validatedData['short_description'],
                 'long_description' => $validatedData['long_description'],
                 'price' => $validatedData['price'],
-                'quantity' => $validatedData['quantity'],
                 'brand_id' => $validatedData['brand'],
                 'published' => $validatedData['status'],
-                'discount_percentage' => $validatedData['discount_percentage'],
-                'discount_price' => Product::getDiscountPrice($validatedData['price'], $validatedData['discount_percentage']),
-                'discount_amount' => Product::getDiscountAmount($validatedData['price'], $validatedData['discount_percentage']),
+
+                'discount_percentage' => $validatedData['discount_percentage'] ?? 0,
+                'discount_price' => $validatedData['discount_percentage'] ? Product::getDiscountPrice($validatedData['price'], $validatedData['discount_percentage']) : 0,
+                'discount_amount' => $validatedData['discount_percentage'] ? Product::getDiscountAmount($validatedData['price'], $validatedData['discount_percentage']) : 0,
             ]);
 
             // Attach categories to the product
             $product->categories()->attach($validatedData['categories']);
+            if ($validatedData['unit_name']) {
+                $product->productUnits()->attach($validatedData['unit_name']); // unit_name contains unit id
+            }
 
-
-
+            // Handle image uploads
             $imagePaths = [];
             $pathName = $product->id;
 
             if ($request->hasFile('images')) {
                 foreach ($request->file('images') as $image) {
-
                     $imageName = time() . '-' . uniqid() . '.' . $image->getClientOriginalExtension();
                     $imagePath = $image->storeAs('products/' . $pathName, $imageName, 'public');
                     $imagePaths[] = $imagePath;
-
                 }
             }
-            foreach ($imagePaths as &$path) {
+
+            // Save image paths to the database
+            foreach ($imagePaths as $path) {
                 ProductImage::create([
                     'product_id' => $product->id,
-                    'image' => $path
+                    'image' => $path,
                 ]);
             }
 
-
             DB::commit();
-            return Redirect::back()->with('success', 'product created successfully');
+            return Redirect::back()->with('success', 'Product created successfully');
         } catch (\Throwable $th) {
             DB::rollBack();
             return Redirect::back()->with('error', $th->getMessage());
@@ -161,7 +182,8 @@ class ProductController extends Controller
 
     public function getUpdateProductPage(Request $request, $id)
     {
-        $product = Product::with(['categories', 'brand', 'productImages'])->findOrFail($id);
+        $product = Product::with(['categories', 'brand', 'productImages', 'productUnits'])->findOrFail($id);
+        $productUnits = ProductUnit::get();
         $catIds = [];
         foreach ($product->categories as &$category) {
             $catIds[] = $category->id;
@@ -169,7 +191,8 @@ class ProductController extends Controller
 
         return Inertia::render('Admin/Product/UpdateProduct', [
             'product' => $product,
-            'catIds' => $catIds
+            'catIds' => $catIds,
+            'productUnits' => $productUnits
         ]);
     }
 
@@ -182,41 +205,55 @@ class ProductController extends Controller
         // return $request->all();
         $product = Product::findOrFail($id);
 
-        $validatedData = $request->validate([
+        $validator = Validator::make($request->all(), [
             'title' => 'required|string|max:255',
             'short_description' => 'required|string',
-            'long_description' => 'required|string',
+            'long_description' => 'nullable|string',
             'price' => 'required|numeric',
             'quantity' => 'required|integer',
-            'brand' => 'required',
-            'status' => 'required',
+            'brand' => 'nullable',
+            'status' => 'required|string|max:50',
             'categories' => 'required|array|exists:categories,id',
+            'images' => 'nullable',
+            'images.*' => 'nullable|mimes:jpeg,png,jpg',
+            'discount_percentage' => 'nullable|numeric',
 
-            // 'images' => 'required',
-            'images.*' => 'mimes:jpeg,png,jpg',
-            'discount_percentage' => 'required|numeric'
+            'unit_name' => $request->input('unit_quantity') ? 'required' : 'nullable',
+            'unit_quantity' => $request->input('unit_name') ? 'required' : 'nullable',
+
         ]);
+
+        // Perform initial validation
+        $validator->validate();
+        $validatedData = $validator->validated();
+
+        // Check for validation errors after adding custom ones
+        if ($validator->fails()) {
+            return Redirect::back()->withErrors($validator)->withInput();
+        }
 
         DB::beginTransaction();
         try {
             $product->update([
                 'title' => $validatedData['title'],
                 'slug' => Str::slug($validatedData['title']),
-                'stock_count' => $validatedData['quantity'],
-                'inStock' => (int) $validatedData['quantity'] > 0 ? true : false,
+
+                'unit_quantity' => $validatedData['unit_quantity'] ?? 0,
                 'short_description' => $validatedData['short_description'],
                 'long_description' => $validatedData['long_description'],
                 'price' => $validatedData['price'],
                 'quantity' => $validatedData['quantity'],
                 'brand_id' => $validatedData['brand'],
                 'published' => $validatedData['status'],
-                'discount_percentage' => $validatedData['discount_percentage'],
-                'discount_price' => Product::getDiscountPrice($validatedData['price'], $validatedData['discount_percentage']),
-                'discount_amount' => Product::getDiscountAmount($validatedData['price'], $validatedData['discount_percentage']),
+
+                'discount_percentage' => $validatedData['discount_percentage'] ?? 0,
+                'discount_price' => $validatedData['discount_percentage'] ? Product::getDiscountPrice($validatedData['price'], $validatedData['discount_percentage']) : 0,
+                'discount_amount' => $validatedData['discount_percentage'] ? Product::getDiscountAmount($validatedData['price'], $validatedData['discount_percentage']) : 0,
             ]);
 
             // Update categories using sync to prevent duplicates
             $product->categories()->sync($validatedData['categories']);
+            $product->productUnits()->sync($validatedData['unit_name']); // unit_name contains unit id
 
             $imagePaths = [];
             $pathName = $product->id;

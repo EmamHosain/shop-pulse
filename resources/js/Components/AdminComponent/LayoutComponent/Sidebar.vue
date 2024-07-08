@@ -1,6 +1,6 @@
 <script setup>
-import { Link } from "@inertiajs/vue3";
-import { ref } from "vue";
+import { Link, usePage } from "@inertiajs/vue3";
+import { ref, computed } from "vue";
 // import Navbar from "../LayoutComponent/Navbar.vue";
 import RightArrowIcon from '../../../Components/Icons/RightArrowIcon.vue'
 
@@ -21,7 +21,7 @@ const handleClose = (key, keyPath) => {
 const subMenuOpenProduct = ref(false);
 const subMenuOpenCategory = ref(false);
 const subMenuOpenBrand = ref(false);
-
+const name = computed(() => usePage().props.auth.user.name)
 
 </script>
 <template>
@@ -59,7 +59,7 @@ const subMenuOpenBrand = ref(false);
 
 
                 <li class="relative">
-                    <Link as="button" :href="route('page.dashboardOverview')"
+                    <Link as="button" :href="route('page.dashboardOverview')" :preserve-scroll="true" :preserve-state="true"
                         class="focus:bg-slate-600 hover:bg-slate-600 flex w-full space-x-2 rounded-md px-10 py-4 text-gray-300 focus:outline-none">
                     <span><svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24"
                             stroke="currentColor" stroke-width="2">
@@ -83,14 +83,16 @@ const subMenuOpenBrand = ref(false);
                                 </svg></span><span class=" capitalize">product</span>
                         </div>
                         <div>
-                            <RightArrowIcon class="size-4" :class="subMenuOpenProduct === true ? 'rotate-90' : 'rotate-360'" />
+                            <RightArrowIcon class="size-4"
+                                :class="subMenuOpenProduct === true ? 'rotate-90' : 'rotate-360'" />
                         </div>
 
                     </button>
 
                     <ul :class="subMenuOpenProduct ? 'block' : 'hidden'" class="bg-gray-600">
                         <li>
-                            <Link as="button" :href="route('page.productView')" preserve-scroll="true" preserve-state="true"
+                            <Link as="button" :href="route('page.productView')" :preserve-scroll="true"
+                                :preserve-state="true"
                                 class="focus:bg-slate-600 hover:bg-slate-600 flex w-full space-x-2 rounded-md px-10 py-4 text-gray-300 focus:outline-none">
                             <span><svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24"
                                     stroke="currentColor" stroke-width="2">
@@ -99,7 +101,8 @@ const subMenuOpenBrand = ref(false);
                                 </svg></span><span class=" capitalize">view product</span></Link>
                         </li>
                         <li>
-                            <Link as="button" :href="route('page.createProduct')" preserve-scroll="true" preserve-state="true"
+                            <Link as="button" :href="route('page.createProduct')" :preserve-scroll="true"
+                                :preserve-state="true"
                                 class="focus:bg-slate-600 hover:bg-slate-600 flex w-full space-x-2 rounded-md px-10 py-4 text-gray-300 focus:outline-none">
                             <span><svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24"
                                     stroke="currentColor" stroke-width="2">
@@ -127,14 +130,16 @@ const subMenuOpenBrand = ref(false);
                                 </svg></span><span class=" capitalize">category</span>
                         </div>
                         <div>
-                            <RightArrowIcon class="size-4" :class="subMenuOpenCategory === true ? 'rotate-90' : 'rotate-360'" />
+                            <RightArrowIcon class="size-4"
+                                :class="subMenuOpenCategory === true ? 'rotate-90' : 'rotate-360'" />
                         </div>
 
                     </button>
 
                     <ul :class="subMenuOpenCategory ? 'block' : 'hidden'" class="bg-gray-600">
                         <li>
-                            <Link as="button" :href="route('page.categoryView')" preserve-scroll="true" preserve-state="true"
+                            <Link as="button" :href="route('page.categoryView')" :preserve-scroll="true"
+                                :preserve-state="true"
                                 class="focus:bg-slate-600 hover:bg-slate-600 flex w-full space-x-2 rounded-md px-10 py-4 text-gray-300 focus:outline-none">
                             <span><svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24"
                                     stroke="currentColor" stroke-width="2">
@@ -143,7 +148,8 @@ const subMenuOpenBrand = ref(false);
                                 </svg></span><span class=" capitalize">view category</span></Link>
                         </li>
                         <li>
-                            <Link as="button" :href="route('page.createCategory')" preserve-scroll="true" preserve-state="true"
+                            <Link as="button" :href="route('page.createCategory')" :preserve-scroll="true"
+                                :preserve-state="true"
                                 class="focus:bg-slate-600 hover:bg-slate-600 flex w-full space-x-2 rounded-md px-10 py-4 text-gray-300 focus:outline-none">
                             <span><svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24"
                                     stroke="currentColor" stroke-width="2">
@@ -168,14 +174,15 @@ const subMenuOpenBrand = ref(false);
                                 </svg></span><span class=" capitalize">brand</span>
                         </div>
                         <div>
-                            <RightArrowIcon class="size-4" :class="subMenuOpenBrand === true ? 'rotate-90' : 'rotate-360'" />
+                            <RightArrowIcon class="size-4"
+                                :class="subMenuOpenBrand === true ? 'rotate-90' : 'rotate-360'" />
                         </div>
 
                     </button>
 
                     <ul :class="subMenuOpenBrand ? 'block' : 'hidden'" class="bg-gray-600">
                         <li>
-                            <Link as="button" :href="route('page.brandView')" preserve-scroll="true" preserve-state="true"
+                            <Link as="button" :href="route('page.brandView')" :preserve-scroll="true" :preserve-state="true"
                                 class="focus:bg-slate-600 hover:bg-slate-600 flex w-full space-x-2 rounded-md px-10 py-4 text-gray-300 focus:outline-none">
                             <span><svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24"
                                     stroke="currentColor" stroke-width="2">
@@ -184,7 +191,8 @@ const subMenuOpenBrand = ref(false);
                                 </svg></span><span class=" capitalize">view brand</span></Link>
                         </li>
                         <li>
-                            <Link as="button" :href="route('page.createBrand')" preserve-scroll="true" preserve-state="true"
+                            <Link as="button" :href="route('page.createBrand')" :preserve-scroll="true"
+                                :preserve-state="true"
                                 class="focus:bg-slate-600 hover:bg-slate-600 flex w-full space-x-2 rounded-md px-10 py-4 text-gray-300 focus:outline-none">
                             <span><svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24"
                                     stroke="currentColor" stroke-width="2">
@@ -196,28 +204,25 @@ const subMenuOpenBrand = ref(false);
                     </ul>
 
                 </li>
-                
-                
-               
+
+
+
                 <li class="relative">
-                    <button
+                    <Link as="button" :href="route('page.settingsPage')" :preserve-state="true"
                         class="focus:bg-slate-600 hover:bg-slate-600 flex w-full space-x-2 rounded-md px-10 py-4 text-gray-300 focus:outline-none">
-                        <span><svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24"
-                                stroke="currentColor" stroke-width="2">
-                                <path stroke-linecap="round" stroke-linejoin="round"
-                                    d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z" />
-                                <path stroke-linecap="round" stroke-linejoin="round" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
-                            </svg></span><span class="">Settings</span>
-                    </button>
+                    <span><svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24"
+                            stroke="currentColor" stroke-width="2">
+                            <path stroke-linecap="round" stroke-linejoin="round"
+                                d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z" />
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+                        </svg></span><span class="">Settings</span>
+                    </Link>
                 </li>
+
+
+
             </ul>
             <!-- navigation sidebar end here -->
-
-
-
-
-
-
 
             <div class="my-6 mt-auto ml-10 flex cursor-pointer">
                 <div>
@@ -225,7 +230,7 @@ const subMenuOpenBrand = ref(false);
                         src="https://images.unsplash.com/photo-1550525811-e5869dd03032?ixlib=rb-1.2.1&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80" />
                 </div>
                 <div class="ml-3">
-                    <p class="font-medium">Diana Reeves</p>
+                    <p class="font-medium">{{ name }}</p>
                     <p class="text-sm text-gray-300">Kyiv, Ukraine</p>
                 </div>
             </div>

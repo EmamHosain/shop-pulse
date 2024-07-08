@@ -11,11 +11,6 @@ const cartCount = computed(() => usePage().props.cart.data.count);
 const wishlistCount = computed(() => usePage().props.wishlist.data.count);
 
 
-
-
-
-
-
 const goToWishlist = () => {
     router.get(route('page.wishlist'), '', {
         onError: (errors) => {

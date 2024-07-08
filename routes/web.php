@@ -105,4 +105,22 @@ Route::middleware(['auth:sanctum', config('jetstream.auth_session'), 'verified']
     // category slider route end here
     // iamge route 
     Route::delete('/admin/remove-product-image/{productId}/{imageId}', [App\Http\Controllers\Admin\ProductImageController::class, 'removeProductImage'])->name('product.image.delete');
+
+
+    // settings route start here
+    Route::get('/admin/settings', [App\Http\Controllers\Admin\SettingsController::class, 'getSettingPage'])->name('page.settingsPage');
+    // settings route end here
+
+
+    // product unit route start here
+    Route::post('/admin/product-unit', [App\Http\Controllers\Admin\ProductUnitController::class, 'storeProductUnit'])->name('productUnit.store');
+    Route::patch('/admin/product-unit/update/{id}', [App\Http\Controllers\Admin\ProductUnitController::class, 'updateProductUnit'])->name('productUnit.update');
+    Route::delete('/admin/product-unit/delete/{id}', [App\Http\Controllers\Admin\ProductUnitController::class, 'deleteProductUnit'])->name('productUnit.delete');
+
+
+    // product unit route end here
+
+
+
+
 });

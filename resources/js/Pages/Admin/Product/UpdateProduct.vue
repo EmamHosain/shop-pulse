@@ -10,13 +10,15 @@ import XCircleIcon from '@/Components/Icons/XCircleIcon.vue';
 
 const props = defineProps({
     product: Object,
-    catIds: Array
+    catIds: Array,
+    productUnits: Array
 })
 
-// console.log('product', props.product)
-// console.log('cat id', props.catIds)
+
+
 
 const product = computed(() => usePage().props.product);
+const units = computed(() => props.productUnits);
 const catIds = ref(usePage().props.catIds);
 
 
@@ -27,6 +29,20 @@ const errors = computed(() => usePage().props.errors ?? '');
 const images = ref([]);
 const rawImages = ref([]);
 
+const unit = ref('');
+
+const getProductCurrentProductUnit = (id) => {
+
+    if (product.value.product_units) {
+        const object = product.value.product_units.find((value, index, array) => {
+            return value.id === id
+        })
+        return object ? true : false;
+    } else {
+        return false;
+    }
+}
+const brand_id = ref(product.value.brand_id ?? '')
 const submit = () => {
 
 
@@ -36,26 +52,35 @@ const submit = () => {
 
     router.post(route('product.update', { id: props.product.id }),
         {
-            _method:'patch',
+            _method: 'patch',
             title: product.value.title,
             short_description: product.value.short_description,
             long_description: product.value.long_description,
             price: product.value.price,
             quantity: product.value.quantity,
-            brand: product.value.brand_id,
+            brand: brand_id.value,
             status: product.value.published,
             categories: catIds.value,
             images: rawImages.value,
-            discount_percentage: product.value.discount_percentage
+            discount_percentage: product.value.discount_percentage,
+
+            unit_quantity: product.value.unit_quantity,
+            unit_name: unit.value
+
         },
 
         {
-            forceFormData:true,
+            forceFormData: true,
             preserveScroll: true,
             preserveState: true,
             replace: true,
             onSuccess: () => {
-                console.log('success message', usePage().props.flash.success);
+                if (usePage().props.flash.success) {
+                    console.log('success message', usePage().props.flash.success);
+                } else {
+                    console.log('success message', usePage().props.flash.error);
+                }
+
                 images.value = []
             },
             onError: () => {
@@ -68,6 +93,14 @@ const submit = () => {
         });
 };
 
+
+const updateProductUnit = (event) => {
+    if (event.target.value !== '') {
+        unit.value = event.target.value
+    } else {
+        return;
+    }
+}
 
 const removeImage = (imageId, productId) => {
     router.delete(route('product.image.delete', {
@@ -222,7 +255,7 @@ const handlePictureCardPreview = (file) => {
                                     <label for="brand"
                                         class="block text-sm font-medium leading-6 text-gray-900 capitalize">brand </label>
                                     <div class="mt-2">
-                                        <select v-model="product.brand_id" id="brand"
+                                        <select v-model="brand_id" id="brand"
                                             class="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6">
                                             <option value="" selected>Select a brand</option>
                                             <option v-for="brand in brands" :key="brand.id" :value="brand.id">{{
@@ -270,6 +303,49 @@ const handlePictureCardPreview = (file) => {
                                     </div>
                                 </div>
                             </div>
+
+
+                            <div class="col-span-full flex md:flex-row sm:flex-col gap-3">
+
+                                <div class="w-1/2 sm:w-full">
+                                    <label for="unit_name"
+                                        class="block text-sm font-medium leading-6 text-gray-900 capitalize">unit name
+                                    </label>
+                                    <div class="mt-2">
+                                        <select @change="updateProductUnit" id="unit_name"
+                                            class="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6">
+                                            <option value="">Select unit name</option>
+                                            <option v-for="unit in units" :key="unit.id" :value="unit.id"
+                                                :selected="getProductCurrentProductUnit(unit.id)">{{
+                                                    unit.unit_name }}</option>
+                                        </select>
+                                        <ErrorMessage :error-message="errors ? errors.unit_name : ''" />
+
+                                    </div>
+                                </div>
+
+
+                                <div class="w-1/2 sm:w-full">
+
+                                    <label class="block text-sm font-medium leading-6 text-gray-900 capitalize">unit
+                                        quantity
+                                    </label>
+                                    <div class=" w-full mt-2">
+                                        <input v-model="product.unit_quantity" type="number" id="dis_percentage"
+                                            autocomplete="off"
+                                            class="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
+                                            placeholder="Unit quantity" />
+                                        <ErrorMessage :error-message="errors ? errors.unit_quantity : ''" />
+
+                                    </div>
+                                </div>
+
+
+
+
+                            </div>
+
+
 
                             <div class="col-span-full flex md:flex-row sm:flex-col gap-3">
 

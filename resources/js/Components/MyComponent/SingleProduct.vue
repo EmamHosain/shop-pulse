@@ -8,6 +8,12 @@ const props = defineProps({
     productItems: Array,
 })
 const { addToCart, addToWishList } = useProduct();
+const getProductDetails = (slug) => {
+    router.get(`${route('page.productDetails')}?product=${slug}`, '', {
+        preserveState: true
+    })
+}
+
 </script>
 <template>
     <article v-for="product, index in productItems" :key="index"
@@ -26,10 +32,10 @@ const { addToCart, addToWishList } = useProduct();
         <div class="my-4 mx-auto flex w-10/12 flex-col items-start justify-between">
             <div class="mb-2 flex">
                 <!-- discount price -->
-                <p class="mr-3 text-sm font-semibold">{{ product.discount_price ?? product.price }}</p>
+                <p class="mr-3 text-sm font-semibold">{{ product.discount_price == 0 ? product.price : product.discount_price }} Tk</p>
 
                 <!-- price -->
-                <del v-if="product.discount_price" class="text-xs text-gray-400"> {{ product.price }} </del>
+                <del v-if="product.discount_price" class="text-xs text-gray-400"> {{ product.price }} Tk</del>
             </div>
             <Link as="button" :href="`${route('page.productDetails')}?product=${product.slug}`"
                 class="mb-2 text-sm text-gray-400 cursor-pointer text-left">{{

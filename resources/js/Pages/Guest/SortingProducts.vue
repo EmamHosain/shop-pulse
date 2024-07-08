@@ -30,9 +30,10 @@ import useProduct from '@/Composables/useProduct';
 
 
 const props = defineProps({
-    selectedCategorySlug: String
+    selectedCategory: Object,
+
 })
-const currentCategory = computed(() => props.selectedCategorySlug)
+const currentCategory = computed(() => props.selectedCategory)
 // const {getProductsByCategory} = useProduct();
 
 const mobileFiltersOpen = ref(false)
@@ -139,12 +140,13 @@ watch(selectedBrand, (newValue) => {
                 <BreadcrumbSection :link="'category'" />
             </div>
             <br>
-            <div class="container my-16">
-                <a href="#">
-                    <img src="../../../assets/images-1/images/banner/offer.jpg" alt="ads" class="w-full rounded-lg">
-                </a>
+            <div v-if="Boolean(selectedCategory.isSliderForCarousel)" class="container my-16">
+
+                <img :src="`/storage/${selectedCategory.cat_slider}`" alt=""
+                    class="w-full object-cover object-center rounded-lg image">
+
             </div>
-            <br>
+           
             <!-- <SortProducts /> -->
 
             <!-- start here -->
@@ -211,7 +213,8 @@ watch(selectedBrand, (newValue) => {
                                                         <div class="flex flex-col gap-3">
                                                             <p @click="getProductsByCategory(category.slug)"
                                                                 v-for="category in categories" :key="category.id"
-                                                                class=" cursor-pointer text-left hover:to-blue-500 category-name" :class="currentCategory===category.slug ? 'text-blue-400' : ''">
+                                                                class=" cursor-pointer text-left hover:to-blue-500 category-name"
+                                                                :class="currentCategory.slug === category.slug ? 'text-blue-400' : ''">
                                                                 {{ category.cat_name }}
                                                             </p>
                                                         </div>
@@ -435,7 +438,8 @@ watch(selectedBrand, (newValue) => {
                                                 <div class="flex flex-col gap-3">
                                                     <p @click="getProductsByCategory(category.slug)"
                                                         v-for="category in categories" :key="category.id"
-                                                        class=" cursor-pointer text-left hover:text-blue-400 category-name" :class="currentCategory===category.slug ? 'text-blue-400' : ''">
+                                                        class=" cursor-pointer text-left hover:text-blue-400 category-name"
+                                                        :class="currentCategory.slug === category.slug ? 'text-blue-400' : ''">
                                                         {{ category.cat_name }}
                                                     </p>
                                                 </div>
@@ -565,6 +569,12 @@ watch(selectedBrand, (newValue) => {
 </template>
  
 <style scoped>
+.image {
+    max-height: 300px;
+    object-fit: fill;
+    object-position: center;
+}
+
 .slider-demo-block {
     max-width: 600px;
     display: flex;

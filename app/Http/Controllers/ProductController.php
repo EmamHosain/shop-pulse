@@ -65,14 +65,11 @@ class ProductController extends Controller
             ->when($orderBy, function ($query) use ($orderBy) {
                 if ($orderBy === 'a-z') {
                     $query->orderBy('title', 'asc');
-                }
-                if ($orderBy === 'z-a') {
+                } else if ($orderBy === 'z-a') {
                     $query->orderBy('title', 'desc');
-                }
-                if ($orderBy === 'low-to-high') {
+                } else if ($orderBy === 'low-to-high') {
                     $query->orderByRaw('CASE WHEN discount_price  THEN CAST(discount_price AS DECIMAL(10,2)) ELSE CAST(price AS DECIMAL(10,2)) END ASC');
-                }
-                if ($orderBy === 'high-to-low') {
+                } else if ($orderBy === 'high-to-low') {
                     $query->orderByRaw('CASE WHEN discount_price  THEN CAST(discount_price AS DECIMAL(10,2)) ELSE CAST(price AS DECIMAL(10,2)) END DESC');
                 }
             })
@@ -95,8 +92,9 @@ class ProductController extends Controller
         return Inertia::render('Guest/SortingProducts', [
             'products' => $products,
             'brands' => BrandResource::collection($brands),
-            'selectedCategorySlug' => $category->slug,
+            'selectedCategory' => $category,
             
+
         ]);
     }
 

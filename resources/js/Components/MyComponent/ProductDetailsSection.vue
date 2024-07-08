@@ -165,17 +165,17 @@ const decrementQuantity = () => {
                     <!-- action button start here -->
                     <div class="flex gap-4 mb-4">
                         <button @click="productBuyNow(product.id)" type="button"
-                            class=" mt-8 px-6 py-3 bg-orange-400 hover:bg-orange-500 text-white text-sm font-semibold rounded-md">Buy
+                            class=" mt-8 px-6 py-3 custom-gradient text-white text-sm font-semibold rounded-md">Buy
                             Now</button>
 
                         <button @click="addToWishList(product.id)" type="button"
-                            class=" mt-8 px-6 py-3 bg-orange-400 hover:bg-orange-500 text-white text-sm font-semibold rounded-md">
+                            class=" mt-8 px-6 py-3 custom-gradient text-white text-sm font-semibold rounded-md">
                             <WishListIcon :size="20" />
                             <!-- <span> Add to wishlist</span> -->
                         </button>
 
                         <button @click="addToCart(product.id)" type="button"
-                            class=" mt-8 px-6 py-3 flex justify-center items-center gap-2 bg-orange-400 hover:bg-orange-500 text-white text-sm font-semibold rounded-md">
+                            class=" mt-8 px-6 py-3 flex justify-center items-center gap-2 custom-gradient text-white text-sm font-semibold rounded-md">
                             <CartIcon :size="18" />
                             <span> Add to cart</span>
                         </button>
@@ -272,21 +272,37 @@ const decrementQuantity = () => {
             </section>
             <!-- related products end here -->
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
         </div>
     </div>
 </template>
+<style scoped>
+.custom-gradient {
+    background: linear-gradient(90deg, #4d99d6, #1d61ad);
+    transition: 0.3s all;
+}
+
+.custom-gradient:hover {
+    background: linear-gradient(90deg, #1d61ad, #4d99d6);
+    transition: 0.3s all;
+}
+
+.cart-btn {
+    border-radius: 3px 0px 0px 3px;
+}
+
+.wishlist-btn {
+    transition: 0.3s all;
+    background: linear-gradient(90deg, #1d61ad, #4d99d6);
+    border-radius: 0px 3px 3px 0px;
+}
+
+.wishlist-btn:hover {
+    background: linear-gradient(90deg, #4d99d6, #1d61ad);
+
+}
+
+.cart-btn:hover {
+    background: linear-gradient(90deg, #1d61ad, #4d99d6);
+
+}
+</style>

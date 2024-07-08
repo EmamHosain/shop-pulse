@@ -86,7 +86,7 @@ class CategoryController extends Controller
             'category_name' => 'required|string|max:255',
             'status' => 'required|boolean',
             'category_logo' => 'nullable|image|mimes:png,jpg,jpeg',
-            'category_slider' => 'nullable|image|mimes:png,jpg,jpeg',
+            'category_slider' => 'nullable|image|mimes:png,jpg,jpeg|dimensions:min_height=350,min_width=1400',
             'carousel' => 'required|boolean',
         ]);
 
@@ -153,7 +153,7 @@ class CategoryController extends Controller
             'category_name' => 'required|unique:categories,cat_name|max:255',
             'status' => 'required|boolean',
             'category_logo' => 'required|image|mimes:png,jpg,jpeg',
-            'category_slider' => 'nullable|image|mimes:png,jpg,jpeg',
+            'category_slider' => 'nullable|image|mimes:png,jpg,jpeg|dimensions:min_height=350,min_width=1400',
             'carousel' => 'nullable|boolean',
         ]);
 

@@ -12,9 +12,9 @@ return new class extends Migration {
     {
         Schema::create('products', function (Blueprint $table) {
             $table->id();
-            $table->unsignedBigInteger('brand_id')->index();
+            $table->unsignedBigInteger('brand_id')->index()->nullable();
             $table->string('title', 255)->unique();
-            $table->string('slug',255);
+            $table->string('slug', 255);
             $table->integer('quantity');
 
 
@@ -22,14 +22,12 @@ return new class extends Migration {
             $table->longText('long_description');
 
             $table->boolean('published')->default(0);
-            $table->boolean('inStock')->default(0);
-            
-            $table->integer('stock_count');
+            $table->integer('unit_quantity')->default(0);
 
-            $table->float('price',2);
+            $table->float('price', 2);
             $table->integer('discount_percentage')->default(0);
-            $table->float('discount_price',2)->default(0);
-            $table->float('discount_amount',2)->default(0);
+            $table->float('discount_price', 2)->default(0);
+            $table->float('discount_amount', 2)->default(0);
 
 
 

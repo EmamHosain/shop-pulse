@@ -1,10 +1,13 @@
 <script setup>
 import AdminLayout from '@/Layouts/AdminLayout.vue';
 import { ref, reactive, computed } from 'vue';
-import { Head, router, useForm, usePage,Link } from '@inertiajs/vue3';
+import { Head, router, useForm, usePage, Link } from '@inertiajs/vue3';
 import { Delete, Download, Plus, ZoomIn } from '@element-plus/icons-vue'
 import ErrorMessage from '../../../Components/AdminComponent/LayoutComponent/ErrorMessage.vue'
 
+
+const props = defineProps({ productUnitNames: Array })
+const unitNames = computed(() => props.productUnitNames)
 const categories = computed(() => usePage().props.categories.data)
 const brands = computed(() => usePage().props.brands.data)
 const errors = computed(() => usePage().props.errors ?? '');
@@ -22,6 +25,8 @@ const form = reactive({
     brand: '',
     status: true,
     images: [],
+    unitName: '',
+    unitQuantity: ''
 });
 const resetFormValue = () => {
     form.name = ''
@@ -35,6 +40,8 @@ const resetFormValue = () => {
     form.status = ''
     form.images = []
     images.value = []
+    form.unitName = ''
+    form.unitQuantity = ''
 }
 
 // console.log(images.value)
@@ -56,14 +63,22 @@ const submit = () => {
             status: form.status,
             categories: form.categories,
             images: form.images,
-            discount_percentage: form.discountPercentage
+            discount_percentage: form.discountPercentage,
+            unit_name: form.unitName,
+            unit_quantity: form.unitQuantity
         }, {
         preserveScroll: true,
         preserveState: true,
         replace: true,
         onSuccess: () => {
-            console.log('success message', usePage().props.flash.success);
-            resetFormValue();
+            if (usePage().props.flash.success) {
+                console.log('success message', usePage().props.flash.success);
+                resetFormValue();
+
+            } else {
+                console.log('success message', usePage().props.flash.error);
+
+            }
         },
         onError: () => {
             console.log('errors', usePage().props.errors);
@@ -251,6 +266,49 @@ const handlePictureCardPreview = (file) => {
                                     </div>
                                 </div>
                             </div>
+
+
+                            <div class="col-span-full flex md:flex-row sm:flex-col gap-3">
+
+                                <div class="w-1/2 sm:w-full">
+                                    <label for="unit_name"
+                                        class="block text-sm font-medium leading-6 text-gray-900 capitalize">unit name
+                                    </label>
+                                    <div class="mt-2">
+                                        <select v-model="form.unitName" id="unit_name"
+                                            class="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6">
+                                            <option value="" selected>Select unit name</option>
+                                            <option v-for="unit in unitNames" :key="unit.id" :value="unit.id">{{
+                                                unit.unit_name }}</option>
+                                        </select>
+                                        <ErrorMessage :error-message="errors ? errors.unit_name : ''" />
+
+                                    </div>
+                                </div>
+
+
+                                <div class="w-1/2 sm:w-full">
+
+                                    <label class="block text-sm font-medium leading-6 text-gray-900 capitalize">unit
+                                        quantity
+                                    </label>
+                                    <div class=" w-full mt-2">
+                                        <input v-model="form.unitQuantity" type="number" id="dis_percentage"
+                                            autocomplete="off"
+                                            class="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
+                                            placeholder="Unit quantity" />
+                                        <ErrorMessage :error-message="errors ? errors.unit_quantity : ''" />
+
+                                    </div>
+                                </div>
+
+
+
+
+                            </div>
+
+
+
 
 
                             <div class="col-span-full flex md:flex-row sm:flex-col gap-3">
