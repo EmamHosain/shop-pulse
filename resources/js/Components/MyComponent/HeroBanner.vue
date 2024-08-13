@@ -21,12 +21,14 @@ const getProductsByCategory = (slug) => {
 </script>
   
 <template>
-    <div class="container ">
+    <div class="container hossain h-80 to-blue-600">
         <Carousel :autoplay="2000" :wrap-around="true" :pauseAutoplayOnHover="true">
-            <Slide v-for="slider in catSliders" :key="slider">
+            <Slide v-for="slider in 5" :key="slider">
                 <div class="carousel__item relative">
-                    <img @click="getProductsByCategory(slider.slug)" :src="`/storage/${slider.cat_slider}`"
-                        class="image w-full max-h-36 md:max-h-96 cursor-pointer " :alt="slider.cat_name">
+                    <!-- <img @click="getProductsByCategory(slider.slug)" :src="`/storage/${slider.cat_slider}`"
+                        class="image w-full max-h-36 md:max-h-96 cursor-pointer " :alt="slider.cat_name"> -->
+                    <img @click="getProductsByCategory(slider.slug)" src="../../../assets/images-1/banner2.jpg"
+                        class="image w-full max-h-36 md:max-h-96 cursor-pointer" :alt="slider.cat_name">
                 </div>
             </Slide>
 
@@ -54,10 +56,10 @@ const getProductsByCategory = (slug) => {
 }
 
 .image {
-    /* width: 100%; */
-    /* max-width: 100%; */
-    /* height: 100%; */
-    /* max-height: 300px; */
+    width: 100%;
+    /* max-width: 100%;
+    height: 100%; */
+    height: 300px;
     object-fit: fill;
     object-position: center;
     border: 1px solid rgba(0, 0, 0, 0);
